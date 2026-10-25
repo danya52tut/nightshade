@@ -1,154 +1,165 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>NIGHTSHADE MOTEL</title>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;600;800&display=swap');
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
-    body { background: #000; overflow: hidden; font-family: 'Inter', sans-serif; color: #fff; touch-action: none; }
-    
-    #game-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
-    
-    /* VHS & Film Effects Overlay */
-    #vhs-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; 
-        background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
-        opacity: 0.6; }
-    #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3;
-        background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%); }
-    #damage-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; background: #f00; opacity: 0; transition: opacity 0.2s; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>NIGHTSHADE MOTEL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;600&display=swap');
 
-    /* UI Layer */
-    #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: none; }
-    #ui-layer.active { display: block; }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background: #000; overflow: hidden; font-family: 'Inter', sans-serif; color: #d0d0d0; touch-action: none; }
+        
+        /* 3D Canvas */
+        #game-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
 
-    /* Mobile Controls */
-    #joystick-zone { position: absolute; bottom: 40px; left: 40px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); pointer-events: auto; }
-    #joystick-knob { position: absolute; width: 60px; height: 60px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; top: 35px; left: 35px; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-    
-    #look-zone { position: absolute; top: 0; right: 0; width: 60%; height: 100%; pointer-events: auto; }
+        /* Effects */
+        #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; box-shadow: inset 0 0 200px rgba(0,0,0,0.9); }
+        #sanity-effect { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; background: radial-gradient(circle, transparent 50%, rgba(100,0,0,0.4) 100%); opacity: 0; transition: opacity 2s; }
+        #film-grain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; opacity: 0.15; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
 
-    #action-buttons { position: absolute; bottom: 40px; right: 40px; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
-    .btn { pointer-events: auto; width: 75px; height: 75px; border-radius: 15px; background: rgba(10,10,10,0.7); border: 1px solid rgba(255,255,255,0.2); color: #ccc; font-family: 'Courier Prime', monospace; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: 0.1s; }
-    .btn:active { transform: scale(0.9); background: rgba(50,50,50,0.9); color: #fff; }
-    .btn.on { border-color: #ff3333; color: #ff3333; box-shadow: 0 0 15px rgba(255,50,50,0.3); }
-    .btn-large { width: 85px; height: 85px; border-radius: 50%; font-size: 16px; }
+        /* HUD Layer */
+        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: none; }
+        #hud.active { display: block; }
 
-    /* Interaction Prompt */
-    #prompt { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 10px 20px; border: 1px solid #555; border-radius: 5px; font-family: 'Courier Prime', monospace; font-size: 16px; color: #fff; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 20; }
-    #prompt.show { opacity: 1; }
+        /* Mobile Controls */
+        #joy-zone { position: absolute; bottom: 40px; left: 40px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); pointer-events: auto; }
+        #joy-knob { position: absolute; width: 60px; height: 60px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; top: 40px; left: 40px; transition: transform 0.05s; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        
+        #look-zone { position: absolute; top: 0; right: 0; width: 60%; height: 100%; pointer-events: auto; }
 
-    /* Modals */
-    .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; pointer-events: auto; z-index: 100; flex-direction: column; padding: 20px; }
-    .modal.active { display: flex; }
-    
-    .doc-paper { background: #d4c9a7; color: #111; padding: 40px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; font-family: 'Courier Prime', monospace; font-size: 18px; line-height: 1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.8); border-radius: 2px; position: relative; }
-    .doc-paper h2 { font-size: 24px; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; }
-    .doc-paper p { margin-bottom: 15px; }
-    .doc-paper .blood-text { color: #800; font-weight: bold; font-size: 20px; }
-    .doc-paper .signature { text-align: right; font-style: italic; margin-top: 30px; }
-    
-    .dialog-box { background: rgba(15,15,20,0.95); border: 1px solid #333; border-left: 5px solid #ff3333; padding: 30px; width: 90%; max-width: 700px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-    .dialog-speaker { color: #ff3333; font-size: 18px; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
-    .dialog-text { font-size: 18px; line-height: 1.5; margin-bottom: 25px; color: #ddd; }
-    .dialog-choices { display: flex; flex-direction: column; gap: 10px; }
-    .choice-btn { background: rgba(255,255,255,0.05); border: 1px solid #444; color: #bbb; padding: 15px; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; }
-    .choice-btn:hover, .choice-btn:active { background: rgba(255,51,51,0.2); border-color: #ff3333; color: #fff; }
+        #btn-group { position: absolute; bottom: 40px; right: 40px; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
+        .btn { pointer-events: auto; width: 70px; height: 70px; border-radius: 50%; background: rgba(15,15,20,0.7); border: 1px solid rgba(255,255,255,0.2); color: #aaa; font-size: 12px; display: flex; align-items: center; justify-content: center; text-align: center; backdrop-filter: blur(4px); transition: 0.1s; font-weight: 600; }
+        .btn:active { transform: scale(0.9); background: rgba(80,80,80,0.8); color: #fff; }
+        .btn.active { border-color: #ff3333; color: #ff3333; box-shadow: 0 0 15px rgba(255,50,50,0.4); }
+        .btn-big { width: 85px; height: 85px; background: rgba(30,10,10,0.8); border-color: #661111; }
 
-    .menu-btn { background: transparent; border: 1px solid #555; color: #fff; padding: 15px 40px; font-size: 18px; margin-top: 20px; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; transition: 0.2s; }
-    .menu-btn:hover { background: #fff; color: #000; }
+        /* Prompts */
+        #interact-prompt { position: absolute; bottom: 180px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 10px 20px; border: 1px solid #444; border-radius: 4px; font-size: 14px; letter-spacing: 1px; display: none; }
+        #interact-prompt.show { display: block; animation: pulse 1.5s infinite; }
 
-    /* Start Screen */
-    #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    #start-title { font-size: 50px; font-family: 'Courier Prime', monospace; font-weight: bold; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 10px; }
-    #start-sub { font-size: 16px; color: #888; letter-spacing: 8px; margin-bottom: 60px; text-transform: uppercase; }
-    #load-indicator { color: #ff3333; font-family: 'Courier Prime', monospace; margin-top: 20px; display: none; }
+        /* UI Modals */
+        .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; pointer-events: auto; padding: 20px; }
+        .modal.active { display: flex; }
+        
+        /* Document Style (Old Paper) */
+        .paper { background: #e8e2cd; color: #111; padding: 40px; width: 100%; max-width: 700px; max-height: 85vh; overflow-y: auto; font-family: 'Special Elite', monospace; font-size: 18px; line-height: 1.6; box-shadow: inset 0 0 50px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.9); border-radius: 2px; position: relative; }
+        .paper::before { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.4"/%3E%3C/svg%3E'); pointer-events: none; mix-blend-mode: multiply; }
+        .paper h2 { font-size: 26px; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; font-weight: normal; }
+        .paper .blood-text { color: #800; font-weight: bold; }
+        
+        /* Dialogue Style */
+        .dialogue-box { background: rgba(5,5,10,0.95); border: 1px solid #333; border-top: 4px solid #7a1f1f; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
+        .speaker-name { color: #9b2929; font-size: 20px; font-weight: 800; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
+        .dialogue-text { font-size: 18px; line-height: 1.6; color: #bbb; margin-bottom: 30px; }
+        .choices { display: flex; flex-direction: column; gap: 12px; }
+        .choice-btn { background: transparent; border: 1px solid #444; color: #999; padding: 15px 20px; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; }
+        .choice-btn:active, .choice-btn:hover { background: rgba(122,31,31,0.2); border-color: #9b2929; color: #fff; }
 
-    /* Inventory */
-    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; width: 100%; max-width: 800px; }
-    .inv-item { background: rgba(30,30,35,0.9); border: 1px solid #444; padding: 20px; text-align: center; cursor: pointer; border-radius: 8px; }
-    .inv-item.active { border-color: #ff3333; box-shadow: 0 0 15px rgba(255,51,51,0.3); }
-    .inv-title { color: #ff3333; font-weight: bold; margin-bottom: 5px; }
-    .inv-desc { font-size: 12px; color: #888; }
+        /* Start Screen */
+        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #start-title { font-family: 'Special Elite', monospace; font-size: 64px; letter-spacing: 4px; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.2); margin-bottom: 10px; }
+        #start-sub { font-size: 14px; color: #9b2929; letter-spacing: 8px; margin-bottom: 50px; text-transform: uppercase; font-weight: 600; }
+        .start-btn { background: transparent; border: 1px solid #444; color: #aaa; padding: 15px 40px; font-size: 18px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .start-btn:hover { background: #fff; color: #000; border-color: #fff; }
+        #loading-bar { width: 0%; height: 2px; background: #9b2929; position: absolute; bottom: 0; left: 0; transition: width 0.3s; }
 
-    /* Screen rotation */
-    #rotate-device { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
-    #rotate-device h1 { color: #ff3333; margin-bottom: 10px; }
-    @media (orientation: portrait) { #rotate-device { display: flex; } }
-</style>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-  }
-}
-</script>
+        /* End Screen */
+        #end-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; }
+        #end-title { font-size: 48px; color: #9b2929; font-family: 'Special Elite', monospace; margin-bottom: 20px; }
+        #end-text { font-size: 18px; max-width: 600px; line-height: 1.6; color: #888; margin-bottom: 40px; }
+
+        /* Inventory */
+        .inv-container { background: rgba(10,10,15,0.95); border: 1px solid #333; padding: 30px; width: 100%; max-width: 800px; }
+        .inv-title { color: #fff; font-size: 24px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .inv-item { background: #151520; border: 1px solid #222; padding: 15px; cursor: pointer; transition: 0.2s; }
+        .inv-item:active { border-color: #9b2929; }
+        .inv-item-name { color: #ccc; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
+        .inv-item-desc { color: #666; font-size: 12px; }
+
+        /* Portrait Warning */
+        #portrait-warning { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        @media (orientation: portrait) { #portrait-warning { display: flex; } }
+
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 <body>
 
-<div id="rotate-device">
-    <h1>ПОВЕРНИТЕ УСТРОЙСТВО</h1>
-    <p style="color:#aaa;">Игра оптимизирована для горизонтального режима</p>
+<div id="portrait-warning">
+    <h2 style="color:#fff; margin-bottom:10px;">Поверните телефон</h2>
+    <p style="color:#666; font-size:14px;">Игра оптимизирована для горизонтального режима</p>
 </div>
 
 <div id="start-screen">
     <div id="start-title">NIGHTSHADE</div>
     <div id="start-sub">MOTEL · GREYHAVEN · 1998</div>
-    <div style="color:#555; max-width:400px; text-align:center; font-size:14px; line-height:1.5; margin-bottom:40px;">
-        Внимание: игра содержит сцены психологического насилия, кровь и резкие звуки. Наденьте наушники и выключите свет. Для лучшего качества подождите загрузку текстур.
+    <button class="start-btn" id="btn-start">ВОЙТИ В НОМЕР 07</button>
+    <div style="margin-top:40px; font-size:12px; color:#444; max-width:400px; text-align:center; line-height:1.5;">
+        ВНИМАНИЕ: Игра содержит психологический хоррор, кровь и резкие звуки. Рекомендуется играть в наушниках и в темноте.
     </div>
-    <button class="menu-btn" id="btn-boot">ЗАГРУЗИТЬ КОШМАР</button>
-    <div id="load-indicator">Генерация текстур и геометрии...</div>
+    <div id="loading-bar"></div>
 </div>
 
 <canvas id="game-canvas"></canvas>
 
-<div id="vhs-overlay"></div>
 <div id="vignette"></div>
-<div id="damage-flash"></div>
+<div id="sanity-effect"></div>
+<div id="film-grain"></div>
 
-<div id="ui-layer">
-    <div id="joystick-zone"><div id="joystick-knob"></div></div>
+<div id="hud">
+    <div id="joy-zone"><div id="joy-knob"></div></div>
     <div id="look-zone"></div>
     
-    <div id="action-buttons">
-        <button class="btn btn-large" id="btn-act">ДЕЙСТВИЕ</button>
-        <button class="btn on" id="btn-light">ФОНАРЬ</button>
-        <button class="btn" id="btn-inv">ИНВЕНТАРЬ</button>
+    <div id="btn-group">
+        <button class="btn btn-big" id="btn-interact">ДЕЙСТВИЕ</button>
+        <button class="btn active" id="btn-flashlight">ФОНАРЬ</button>
+        <button class="btn" id="btn-inventory">РЮКЗАК</button>
     </div>
-
-    <div id="prompt">Взаимодействовать</div>
+    
+    <div id="interact-prompt">Взаимодействовать</div>
 </div>
 
-<!-- Modals -->
+<!-- Document Modal -->
 <div class="modal" id="modal-doc">
-    <div class="doc-paper" id="doc-content"></div>
-    <button class="menu-btn" id="btn-close-doc" style="color:#fff; border-color:#fff;">ЗАКРЫТЬ</button>
+    <div class="paper" id="doc-content"></div>
+    <button class="start-btn" id="btn-close-doc" style="margin-top:20px; color:#fff; border-color:#fff; width:200px;">ЗАКРЫТЬ</button>
 </div>
 
-<div class="modal" id="modal-dialog">
-    <div class="dialog-box">
-        <div class="dialog-speaker" id="dlg-speaker">Голос</div>
-        <div class="dialog-text" id="dlg-text">...</div>
-        <div class="dialog-choices" id="dlg-choices"></div>
+<!-- Dialogue Modal -->
+<div class="modal" id="modal-dialogue">
+    <div class="dialogue-box">
+        <div class="speaker-name" id="dlg-speaker">Неизвестный</div>
+        <div class="dialogue-text" id="dlg-text">...</div>
+        <div class="choices" id="dlg-choices"></div>
     </div>
 </div>
 
-<div class="modal" id="modal-inv">
-    <h2 style="margin-bottom:30px; font-family:'Courier Prime';">ИНВЕНТАРЬ</h2>
-    <div class="inv-grid" id="inv-grid"></div>
-    <button class="menu-btn" id="btn-close-inv">ЗАКРЫТЬ</button>
+<!-- Inventory Modal -->
+<div class="modal" id="modal-inventory">
+    <div class="inv-container">
+        <div class="inv-title">ИНВЕНТАРЬ</div>
+        <div class="inv-grid" id="inv-grid"></div>
+        <button class="start-btn" id="btn-close-inv" style="margin-top:20px; width:100%;">ЗАКРЫТЬ</button>
+    </div>
 </div>
 
-<div class="modal" id="modal-ending">
-    <h1 id="end-title" style="font-size:40px; font-family:'Courier Prime'; margin-bottom:20px;">КОНЕЦ</h1>
-    <p id="end-text" style="max-width:600px; text-align:center; font-size:18px; line-height:1.6; color:#bbb; margin-bottom:40px;"></p>
-    <button class="menu-btn" onclick="location.reload()">ПЕРЕЗАПУСТИТЬ</button>
+<!-- End Screen -->
+<div id="end-screen">
+    <div id="end-title">КОНЕЦ</div>
+    <div id="end-text">...</div>
+    <button class="start-btn" onclick="location.reload()">НАЧАТЬ ЗАНОВО</button>
 </div>
 
 <script type="module">
@@ -156,48 +167,45 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
+import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
 
 // ============================================================================
-// 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ И КОНСТАНТЫ
+// 1. GLOBAL STATE & CONSTANTS (СИСТЕМА СОСТОЯНИЙ)
 // ============================================================================
-const GAME_STATE = {
-    STARTED: false,
-    PAUSED: false,
-    IN_DIALOG: false,
-    HAS_KEY: false,
-    HAS_BASEMENT_KEY: false,
-    FLASHLIGHT_ON: true,
-    CLUES_FOUND: 0,
-    SANITY: 100,
-    INVENTORY: []
-};
-
-const PLAYER = {
-    pos: new THREE.Vector3(0, 1.6, 4),
-    vel: new THREE.Vector3(),
+const STATE = {
+    started: false,
+    paused: false,
+    inMenu: false,
+    sanity: 100,
+    inventory: [],
+    flags: {
+        readJournal: false,
+        foundKey: false,
+        openedBathroom: false,
+        answeredPhone: false,
+        reflectionTriggered: false,
+        ending: null
+    },
+    position: new THREE.Vector3(0, 1.6, 3),
     yaw: 0,
-    pitch: 0,
-    speed: 3.0,
-    sprintMultiplier: 1.6,
-    isCrouching: false,
-    isSprinting: false
+    pitch: 0
 };
 
 // ============================================================================
-// 2. АУДИО-ДВИЖОК (Процедурный звук)
+// 2. AUDIO ENGINE (ПРОЦЕДУРНЫЙ ЗВУК)
 // ============================================================================
-const AudioEngine = {
-    ctx: null,
-    rainNode: null,
-    ambientNode: null,
+class SoundEngine {
+    constructor() {
+        this.ctx = null;
+        this.rainSource = null;
+        this.droneOsc = null;
+    }
     init() {
         const AC = window.AudioContext || window.webkitAudioContext;
         this.ctx = new AC();
         this.startAmbient();
-    },
+    }
     playTone(freq, type, duration, vol) {
         if(!this.ctx) return;
         const osc = this.ctx.createOscillator();
@@ -210,76 +218,98 @@ const AudioEngine = {
         gain.connect(this.ctx.destination);
         osc.start();
         osc.stop(this.ctx.currentTime + duration);
-    },
-    step() { this.playTone(60 + Math.random()*20, 'triangle', 0.15, 0.2); },
-    click() { this.playTone(800, 'square', 0.05, 0.05); },
-    door() { this.playTone(100, 'sawtooth', 0.8, 0.3); },
-    phone() {
+    }
+    footstep() {
+        this.playTone(50 + Math.random()*20, 'triangle', 0.1, 0.15);
+    }
+    click() {
+        this.playTone(1200, 'square', 0.05, 0.05);
+    }
+    doorCreak() {
         if(!this.ctx) return;
-        for(let i=0; i<5; i++) setTimeout(() => this.playTone(900, 'sine', 0.1, 0.2), i*100);
-        setTimeout(() => { for(let i=0; i<5; i++) setTimeout(() => this.playTone(900, 'sine', 0.1, 0.2), i*100); }, 500);
-    },
-    whisper() { this.playTone(150 + Math.random()*50, 'sawtooth', 1.5, 0.1); },
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 1);
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 1);
+    }
+    phoneRing() {
+        if(!this.ctx) return;
+        const ring = () => {
+            this.playTone(1000, 'sine', 0.1, 0.2);
+            setTimeout(()=>this.playTone(1200, 'sine', 0.1, 0.2), 50);
+        };
+        for(let i=0; i<6; i++) setTimeout(ring, i*200);
+        setTimeout(()=>{ for(let i=0; i<6; i++) setTimeout(ring, i*200); }, 1000);
+    }
     startAmbient() {
         if(!this.ctx) return;
-        // Rain noise
+        // Rain noise (Buffer)
         const bufferSize = this.ctx.sampleRate * 2;
         const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
         
-        this.rainNode = this.ctx.createBufferSource();
-        this.rainNode.buffer = buffer;
-        this.rainNode.loop = true;
+        this.rainSource = this.ctx.createBufferSource();
+        this.rainSource.buffer = buffer;
+        this.rainSource.loop = true;
         
         const filter = this.ctx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.value = 1000;
+        filter.frequency.value = 800;
         
         const gain = this.ctx.createGain();
-        gain.gain.value = 0.1;
+        gain.gain.value = 0.15; // Volume of rain
         
-        this.rainNode.connect(filter);
+        this.rainSource.connect(filter);
         filter.connect(gain);
         gain.connect(this.ctx.destination);
-        this.rainNode.start();
+        this.rainSource.start();
 
         // Low drone
-        const osc = this.ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.value = 40;
+        this.droneOsc = this.ctx.createOscillator();
+        this.droneOsc.type = 'sine';
+        this.droneOsc.frequency.value = 45;
         const dGain = this.ctx.createGain();
         dGain.gain.value = 0.05;
-        osc.connect(dGain);
+        this.droneOsc.connect(dGain);
         dGain.connect(this.ctx.destination);
-        osc.start();
+        this.droneOsc.start();
     }
-};
+}
+const AudioSys = new SoundEngine();
 
 // ============================================================================
-// 3. ГЕНЕРАТОР ПРОЦЕДУРНЫХ ТЕКСТУР (PBR)
+// 3. PROCEDURAL TEXTURES (ГЕНЕРАЦИЯ ТЕКСТУР ВЫСОКОГО КАЧЕСТВА)
 // ============================================================================
-function generateNoiseTexture(size, baseColor, noiseColor, intensity) {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = size;
-    const ctx = canvas.getContext('2d');
+function createNoiseTexture(width, height, baseColor, noiseColor, intensity, repeatX=1, repeatY=1) {
+    const c = document.createElement('canvas');
+    c.width = width; c.height = height;
+    const ctx = c.getContext('2d');
     ctx.fillStyle = baseColor;
-    ctx.fillRect(0, 0, size, size);
-    for (let i = 0; i < size * size * 0.1; i++) {
+    ctx.fillRect(0, 0, width, height);
+    for (let i = 0; i < width * height * 0.2; i++) {
         ctx.fillStyle = noiseColor;
         ctx.globalAlpha = Math.random() * intensity;
-        ctx.fillRect(Math.random() * size, Math.random() * size, Math.random() * 3 + 1, Math.random() * 3 + 1);
+        ctx.fillRect(Math.random() * width, Math.random() * height, Math.random() * 3 + 1, Math.random() * 3 + 1);
     }
-    return new THREE.CanvasTexture(canvas);
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(repeatX, repeatY);
+    return tex;
 }
 
-function generateWoodTexture() {
+function createWoodTexture() {
     const c = document.createElement('canvas'); c.width = 512; c.height = 512;
     const ctx = c.getContext('2d');
-    ctx.fillStyle = '#1a0f08'; ctx.fillRect(0,0,512,512);
-    for(let i=0; i<2000; i++) {
-        ctx.fillStyle = `rgba(${40+Math.random()*20}, ${20+Math.random()*10}, 0, ${Math.random()*0.4})`;
-        ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*100+20, Math.random()*4+1);
+    ctx.fillStyle = '#110a05'; ctx.fillRect(0,0,512,512);
+    for(let i=0; i<400; i++) {
+        ctx.fillStyle = `rgba(${40+Math.random()*30}, ${20+Math.random()*10}, 0, ${Math.random()*0.4})`;
+        ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*200+50, Math.random()*2+1);
     }
     const tex = new THREE.CanvasTexture(c);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
@@ -287,23 +317,28 @@ function generateWoodTexture() {
     return tex;
 }
 
-function generateWallpaperTexture() {
+function createWallpaperTexture() {
     const c = document.createElement('canvas'); c.width = 512; c.height = 512;
     const ctx = c.getContext('2d');
-    ctx.fillStyle = '#2a251e'; ctx.fillRect(0,0,512,512);
-    // Pattern
-    ctx.fillStyle = '#221e18';
+    ctx.fillStyle = '#2b2520'; ctx.fillRect(0,0,512,512);
+    // Ornamental pattern
+    ctx.fillStyle = '#1f1a16';
     for(let x=0; x<512; x+=64) {
         for(let y=0; y<512; y+=64) {
             ctx.beginPath();
-            ctx.arc(x+32, y+32, 20, 0, Math.PI*2);
+            ctx.arc(x+32, y+32, 24, 0, Math.PI*2);
             ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x+32, y+32, 12, 0, Math.PI*2);
+            ctx.fillStyle = '#2b2520';
+            ctx.fill();
+            ctx.fillStyle = '#1f1a16';
         }
     }
-    // Grime
-    for(let i=0; i<500; i++) {
-        ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.3})`;
-        ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*50, Math.random()*50);
+    // Grime and water damage
+    for(let i=0; i<300; i++) {
+        ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.4})`;
+        ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*80, Math.random()*80);
     }
     const tex = new THREE.CanvasTexture(c);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
@@ -311,44 +346,28 @@ function generateWallpaperTexture() {
     return tex;
 }
 
-function generateCarpetTexture() {
+function createCarpetTexture() {
     const c = document.createElement('canvas'); c.width = 512; c.height = 512;
     const ctx = c.getContext('2d');
-    ctx.fillStyle = '#1a0808'; ctx.fillRect(0,0,512,512);
-    for(let i=0; i<10000; i++) {
-        ctx.fillStyle = `rgba(${50+Math.random()*20}, ${10}, ${10}, ${Math.random()*0.5})`;
+    ctx.fillStyle = '#140808'; ctx.fillRect(0,0,512,512);
+    for(let i=0; i<15000; i++) {
+        ctx.fillStyle = `rgba(${40+Math.random()*20}, ${5}, ${5}, ${Math.random()*0.6})`;
         ctx.fillRect(Math.random()*512, Math.random()*512, 2, 2);
     }
-    // Blood stain
-    ctx.fillStyle = 'rgba(40, 0, 0, 0.8)';
-    ctx.beginPath();
-    ctx.arc(256, 256, 100, 0, Math.PI*2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(300, 300, 60, 0, Math.PI*2);
-    ctx.fill();
-
+    // Blood splatter
+    ctx.fillStyle = 'rgba(60, 0, 0, 0.9)';
+    ctx.beginPath(); ctx.arc(250, 250, 80, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(320, 300, 40, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(180, 280, 20, 0, Math.PI*2); ctx.fill();
+    
     const tex = new THREE.CanvasTexture(c);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(4, 4);
+    tex.repeat.set(3, 3);
     return tex;
 }
 
-// Материалы
-const MATS = {
-    floor: new THREE.MeshStandardMaterial({ map: generateWoodTexture(), roughness: 0.8, metalness: 0.1 }),
-    carpet: new THREE.MeshStandardMaterial({ map: generateCarpetTexture(), roughness: 1.0 }),
-    wallpaper: new THREE.MeshStandardMaterial({ map: generateWallpaperTexture(), roughness: 0.9 }),
-    ceiling: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1.0 }),
-    metal: new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.4, metalness: 0.8 }),
-    wood: new THREE.MeshStandardMaterial({ map: generateWoodTexture(), roughness: 0.7 }),
-    fabric: new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 1.0 }),
-    glass: new THREE.MeshStandardMaterial({ color: 0x88ccff, roughness: 0.1, metalness: 0.9, transparent: true, opacity: 0.6 }),
-    blood: new THREE.MeshStandardMaterial({ color: 0x3a0000, roughness: 0.2, metalness: 0.1 })
-};
-
 // ============================================================================
-// 4. THREE.JS INIT & POST-PROCESSING
+// 4. THREE.JS SETUP & RENDER PIPELINE
 // ============================================================================
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -357,571 +376,506 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMappingExposure = 1.1;
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x050505, 0.08);
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.05, 50);
+scene.fog = new THREE.FogExp2(0x050202, 0.06);
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 50);
 
-// Composer
+// Post-Processing Pipeline
 const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
 
 const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-ssaoPass.kernelRadius = 16;
+ssaoPass.kernelRadius = 12;
 ssaoPass.minDistance = 0.005;
 ssaoPass.maxDistance = 0.1;
 composer.addPass(ssaoPass);
 
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-bloomPass.threshold = 0.2;
-bloomPass.strength = 0.6;
-bloomPass.radius = 0.8;
+bloomPass.threshold = 0.3;
+bloomPass.strength = 0.7;
+bloomPass.radius = 0.6;
 composer.addPass(bloomPass);
 
 const filmPass = new FilmPass(0.35, 0.025, 648.0, false);
 composer.addPass(filmPass);
 
-const vhsShader = {
-    uniforms: { tDiffuse: { value: null }, time: { value: 0 } },
-    vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-    fragmentShader: `
-        uniform sampler2D tDiffuse; uniform float time; varying vec2 vUv;
-        void main() {
-            vec2 uv = vUv;
-            float offset = sin(uv.y * 10.0 + time * 5.0) * 0.002;
-            uv.x += offset;
-            vec4 color = texture2D(tDiffuse, uv);
-            // Chromatic aberration
-            float r = texture2D(tDiffuse, uv + vec2(0.002, 0.0)).r;
-            float b = texture2D(tDiffuse, uv - vec2(0.002, 0.0)).b;
-            color.r = r; color.b = b;
-            gl_FragColor = color;
-        }`
+// ============================================================================
+// 5. WORLD BUILDING (ДЕТАЛИЗИРОВАННОЕ ОКРУЖЕНИЕ)
+// ============================================================================
+const colliders = [];
+const interactables = [];
+
+const MATS = {
+    wall: new THREE.MeshStandardMaterial({ map: createWallpaperTexture(), roughness: 0.9, metalness: 0.1 }),
+    wood: new THREE.MeshStandardMaterial({ map: createWoodTexture(), roughness: 0.7, metalness: 0.0 }),
+    carpet: new THREE.MeshStandardMaterial({ map: createCarpetTexture(), roughness: 1.0 }),
+    ceiling: new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 1.0 }),
+    metal: new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.4, metalness: 0.8 }),
+    glass: new THREE.MeshStandardMaterial({ color: 0x88bbdd, roughness: 0.1, metalness: 0.9, transparent: true, opacity: 0.4 }),
+    fabric: new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1.0 }),
+    tvScreen: new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x0000ff, emissiveIntensity: 1 })
 };
-const vhsPass = new ShaderPass(vhsShader);
-composer.addPass(vhsPass);
 
-// ============================================================================
-// 5. ПОСТРОЕНИЕ МИРА (ГЕОМЕТРИЯ И КОЛЛИЗИИ)
-// ============================================================================
-const colliders = []; // Box3
-const interactables = []; // Объекты для взаимодействия
-
-function addBox(x, y, z, w, h, d, mat, castShadow = true, receiveShadow = true) {
-    const geo = new THREE.BoxGeometry(w, h, d);
-    const mesh = new THREE.Mesh(geo, mat);
+function addBox(w, h, d, mat, x, y, z, isCollider = true) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
     mesh.position.set(x, y, z);
-    mesh.castShadow = castShadow;
-    mesh.receiveShadow = receiveShadow;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     scene.add(mesh);
-    
-    const box = new THREE.Box3().setFromObject(mesh);
-    colliders.push(box);
+    if(isCollider) colliders.push(new THREE.Box3().setFromObject(mesh));
     return mesh;
 }
 
-function addInteractable(mesh, type, data) {
-    interactables.push({ mesh, type, data });
-    // Highlight effect could be added here
+function createRoom() {
+    // Floor & Ceiling
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.carpet);
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.ceiling);
+    ceil.rotation.x = Math.PI / 2;
+    ceil.position.y = 3;
+    scene.add(ceil);
+
+    // Walls
+    addBox(0.2, 3, 12, MATS.wall, -4, 1.5, 0); // Left
+    addBox(0.2, 3, 12, MATS.wall, 4, 1.5, 0);  // Right
+    addBox(8, 3, 0.2, MATS.wall, 0, 1.5, -6);  // Back
+    
+    // Front wall with door gap
+    addBox(3, 3, 0.2, MATS.wall, -2.5, 1.5, 6);
+    addBox(3, 3, 0.2, MATS.wall, 2.5, 1.5, 6);
+    addBox(2, 1, 0.2, MATS.wall, 0, 2.5, 6);
+
+    // --- Furniture ---
+    // Bed
+    const bedGroup = new THREE.Group();
+    const bedBase = addBox(2.5, 0.4, 4, MATS.wood, 0, 0.2, 0, false);
+    const mattress = addBox(2.3, 0.2, 3.8, MATS.fabric, 0, 0.5, 0, false);
+    const pillow = addBox(1.8, 0.15, 0.6, new THREE.MeshStandardMaterial({color:0x888888}), 0, 0.65, -1.3, false);
+    bedGroup.add(bedBase, mattress, pillow);
+    bedGroup.position.set(-2.5, 0, -2.5);
+    scene.add(bedGroup);
+    colliders.push(new THREE.Box3().setFromObject(bedGroup));
+
+    // Nightstand & Lamp
+    addBox(0.8, 0.8, 0.8, MATS.wood, -0.8, 0.4, -4.5);
+    const lampBase = addBox(0.1, 0.4, 0.1, MATS.metal, -0.8, 0.8, -4.5, false);
+    const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.4, 16), new THREE.MeshStandardMaterial({color: 0xffccaa, emissive: 0xff8822, emissiveIntensity: 1}));
+    lampShade.position.set(-0.8, 1.2, -4.5);
+    scene.add(lampShade);
+    
+    // Lamp Light
+    const lampLight = new THREE.PointLight(0xffaa55, 1.5, 6);
+    lampLight.position.set(-0.8, 1.2, -4.5);
+    lampLight.castShadow = true;
+    lampLight.shadow.mapSize.width = 1024;
+    scene.add(lampLight);
+
+    // Desk & TV
+    addBox(2, 0.8, 1, MATS.wood, 2, 0.4, -4);
+    const tvCase = addBox(1.2, 0.9, 0.9, new THREE.MeshStandardMaterial({color:0x111111}), 2, 1.25, -4);
+    const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), MATS.tvScreen);
+    tvScreen.position.set(2, 1.25, -3.54);
+    scene.add(tvScreen);
+    
+    const tvLight = new THREE.PointLight(0x0000ff, 1.5, 5);
+    tvLight.position.set(2, 1.25, -3);
+    scene.add(tvLight);
+
+    // Window (Rain)
+    const windowGeo = new THREE.BoxGeometry(0.1, 1.5, 2.5);
+    const windowMesh = new THREE.Mesh(windowGeo, MATS.glass);
+    windowMesh.position.set(3.95, 1.8, -1);
+    scene.add(windowMesh);
+    // Frame
+    addBox(0.1, 1.6, 0.1, MATS.wood, 3.95, 1.8, -2.25, false);
+    addBox(0.1, 1.6, 0.1, MATS.wood, 3.95, 1.8, 0.25, false);
+
+    // Door
+    const door = addBox(1.8, 2.5, 0.1, MATS.wood, 0, 1.25, 5.95);
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.05), MATS.metal);
+    knob.position.set(0.7, 1.25, 5.85);
+    scene.add(knob);
+
+    // --- Lighting ---
+    scene.add(new THREE.AmbientLight(0x111122, 0.5));
+    const moon = new THREE.DirectionalLight(0x4455aa, 0.3);
+    moon.position.set(-5, 5, 5);
+    scene.add(moon);
+
+    // Flashlight
+    const flashlight = new THREE.SpotLight(0xffeedd, 4, 12, Math.PI/6, 0.5, 1);
+    flashlight.castShadow = true;
+    flashlight.shadow.mapSize.width = 1024;
+    flashlight.shadow.bias = -0.001;
+    camera.add(flashlight);
+    flashlight.position.set(0.2, -0.1, 0);
+    flashlight.target.position.set(0, 0, -1);
+    camera.add(flashlight.target);
+    scene.userData.flashlight = flashlight;
+    scene.userData.tvScreen = tvScreen;
+    scene.userData.tvLight = tvLight;
+
+    // Register Interactables
+    interactables.push({ mesh: tvCase, type: 'tv' });
+    interactables.push({ mesh: door, type: 'door' });
+    interactables.push({ mesh: lampBase, type: 'lamp' });
+    
+    // Add Note on desk
+    const noteMesh = addBox(0.2, 0.01, 0.3, new THREE.MeshStandardMaterial({color:0xeeeecc}), 1.5, 0.81, -3.8, false);
+    interactables.push({ mesh: noteMesh, type: 'document', title: 'Пятно на столе', text: 'Это не чернила. Ты знаешь, что это. Ты помнишь, как пытался отмыть это в ванной, но вода была слишком холодной. <br><br>Ключ от машины был в кармане. Но машины больше нет.' });
 }
 
-// --- Комната 07 ---
-// Пол (ковер)
-const floorMesh = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.carpet);
-floorMesh.rotation.x = -Math.PI / 2;
-floorMesh.receiveShadow = true;
-scene.add(floorMesh);
-
-// Потолок
-const ceilMesh = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.ceiling);
-ceilMesh.rotation.x = Math.PI / 2;
-ceilMesh.position.y = 3;
-scene.add(ceilMesh);
-
-// Стены
-addBox(-4, 1.5, 0, 0.2, 3, 12, MATS.wallpaper); // Левая
-addBox(4, 1.5, 0, 0.2, 3, 12, MATS.wallpaper);  // Правая
-addBox(0, 1.5, -6, 8, 3, 0.2, MATS.wallpaper);  // Задняя
-// Передняя стена с дверным проемом
-addBox(-2.5, 1.5, 6, 3, 3, 0.2, MATS.wallpaper);
-addBox(2.5, 1.5, 6, 3, 3, 0.2, MATS.wallpaper);
-addBox(0, 2.75, 6, 2, 0.5, 0.2, MATS.wallpaper); // Над дверью
-
-// --- Мебель ---
-// Кровать
-const bedGroup = new THREE.Group();
-const bedFrame = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.4, 4), MATS.wood);
-bedFrame.position.y = 0.2; bedFrame.castShadow = bedFrame.receiveShadow = true;
-const mattress = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.3, 3.8), MATS.fabric);
-mattress.position.y = 0.55; mattress.castShadow = mattress.receiveShadow = true;
-const pillow = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.15, 0.8), new THREE.MeshStandardMaterial({color:0x999999, roughness:1}));
-pillow.position.set(0, 0.75, -1.2); pillow.castShadow = true;
-bedGroup.add(bedFrame, mattress, pillow);
-bedGroup.position.set(-2.5, 0, -3);
-scene.add(bedGroup);
-colliders.push(new THREE.Box3().setFromObject(bedGroup));
-
-// Тумбочка
-addBox(-0.8, 0.4, -4.5, 0.8, 0.8, 0.8, MATS.wood);
-
-// Записка на тумбочке
-const noteGeo = new THREE.PlaneGeometry(0.3, 0.4);
-const noteMat = new THREE.MeshStandardMaterial({ color: 0xeeeecc, roughness: 1, side: THREE.DoubleSide });
-const noteMesh = new THREE.Mesh(noteGeo, noteMat);
-noteMesh.rotation.x = -Math.PI / 2;
-noteMesh.rotation.z = 0.2;
-noteMesh.position.set(-0.8, 0.81, -4.5);
-scene.add(noteMesh);
-addInteractable(noteMesh, 'document', { title: 'Записка на тумбочке', text: 'Я знаю, что ты сделал. Я видела, как ты выходил из леса в ту ночь. Не притворяйся, что не помнишь. Жди меня в баре в полночь. Иначе я всё расскажу копам.<br><br>— В.' });
-
-// Стол и стул
-addBox(2, 0.4, -3, 2, 0.8, 1, MATS.wood);
-addBox(2, 0.2, -1.5, 0.8, 0.4, 0.8, MATS.wood); // Сиденье стула
-addBox(2, 0.7, -1.1, 0.8, 0.8, 0.1, MATS.wood); // Спинка
-
-// Радиоприемник на столе
-const radio = addBox(2.5, 0.95, -3, 0.6, 0.3, 0.3, MATS.metal);
-addInteractable(radio, 'radio', {});
-// Светодиод
-const led = new THREE.Mesh(new THREE.SphereGeometry(0.02), new THREE.MeshBasicMaterial({color: 0xff0000}));
-led.position.set(2.7, 1.0, -2.84);
-scene.add(led);
-
-// Телевизор
-const tvGroup = new THREE.Group();
-const tvCase = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 0.9), new THREE.MeshStandardMaterial({color:0x222222}));
-tvCase.position.y = 1.25; tvCase.castShadow = true;
-const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), new THREE.MeshBasicMaterial({color: 0x0000ff}));
-tvScreen.position.set(0, 1.25, 0.46);
-tvGroup.add(tvCase, tvScreen);
-tvGroup.position.set(2, 0, -4.8);
-scene.add(tvGroup);
-colliders.push(new THREE.Box3().setFromObject(tvGroup));
-addInteractable(tvCase, 'tv', {});
-
-// Дверь (выход)
-const doorGeo = new THREE.BoxGeometry(1.8, 2.5, 0.1);
-const doorMesh = new THREE.Mesh(doorGeo, MATS.wood);
-doorMesh.position.set(0, 1.25, 5.95);
-doorMesh.castShadow = true;
-scene.add(doorMesh);
-// Ручка
-const knob = new THREE.Mesh(new THREE.SphereGeometry(0.06), MATS.metal);
-knob.position.set(0.7, 1.25, 5.85);
-scene.add(knob);
-addInteractable(doorMesh, 'door', { locked: true, req: 'key07' });
-
-// --- Освещение ---
-const ambient = new THREE.AmbientLight(0x0a0a12, 0.8);
-scene.add(ambient);
-
-// Луна за окном
-const moonLight = new THREE.DirectionalLight(0x4455aa, 0.3);
-moonLight.position.set(-5, 5, 10);
-scene.add(moonLight);
-
-// Лампа на тумбочке
-const lampLight = new THREE.PointLight(0xffaa55, 0.8, 6);
-lampLight.position.set(-0.8, 1.0, -4.5);
-lampLight.castShadow = true;
-lampLight.shadow.mapSize.width = 512;
-lampLight.shadow.mapSize.height = 512;
-scene.add(lampLight);
-
-// Свет от ТВ
-const tvLight = new THREE.PointLight(0x0000ff, 0.5, 4);
-tvLight.position.set(2, 1.25, -4.2);
-scene.add(tvLight);
-
-// Фонарь игрока
-const flashlight = new THREE.SpotLight(0xffffff, 5, 15, Math.PI/6, 0.5, 1);
-flashlight.castShadow = true;
-flashlight.shadow.mapSize.width = 1024;
-flashlight.shadow.mapSize.height = 1024;
-flashlight.shadow.camera.near = 0.1;
-flashlight.shadow.camera.far = 15;
-flashlight.shadow.bias = -0.001;
-camera.add(flashlight);
-flashlight.position.set(0.2, -0.1, 0);
-flashlight.target.position.set(0, 0, -1);
-camera.add(flashlight.target);
-
-// Окно
-const windowGeo = new THREE.BoxGeometry(0.1, 1.5, 2);
-const windowMesh = new THREE.Mesh(windowGeo, MATS.glass);
-windowMesh.position.set(3.9, 1.8, -1);
-scene.add(windowMesh);
-// Рама
-addBox(3.95, 1.8, -2.05, 0.1, 1.6, 0.1, MATS.wood);
-addBox(3.95, 1.8, 0.05, 0.1, 1.6, 0.1, MATS.wood);
-
-// Добавляем игрока в сцену
+createRoom();
 scene.add(camera);
 
 // ============================================================================
-// 6. СИСТЕМА УПРАВЛЕНИЯ
+// 6. PLAYER CONTROLS & PHYSICS
 // ============================================================================
 const keys = { w: false, a: false, s: false, d: false };
-let touchJoyActive = false, touchLookActive = false;
-let joyX = 0, joyY = 0;
-let lookTouchId = null, joyTouchId = null;
-let lastLookX = 0, lastLookY = 0;
+let joyActive = false, joyId = null, joyX = 0, joyY = 0;
+let lookId = null, lastX = 0, lastY = 0;
 
-// Клавиатура (для ПК)
+// Desktop controls
 window.addEventListener('keydown', e => {
-    if (e.key === 'w' || e.key === 'W' || e.key === 'ц' || e.key === 'Ц') keys.w = true;
-    if (e.key === 's' || e.key === 'S' || e.key === 'ы' || e.key === 'Ы') keys.s = true;
-    if (e.key === 'a' || e.key === 'A' || e.key === 'ф' || e.key === 'Ф') keys.a = true;
-    if (e.key === 'd' || e.key === 'D' || e.key === 'в' || e.key === 'В') keys.d = true;
-    if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') toggleFlashlight();
-    if (e.key === 'e' || e.key === 'E' || e.key === 'у' || e.key === 'У') interact();
+    if(e.key === 'w' || e.key === 'W') keys.w = true;
+    if(e.key === 's' || e.key === 'S') keys.s = true;
+    if(e.key === 'a' || e.key === 'A') keys.a = true;
+    if(e.key === 'd' || e.key === 'D') keys.d = true;
+    if(e.key === 'f' || e.key === 'F') toggleLight();
+    if(e.key === 'e' || e.key === 'E') doInteract();
 });
 window.addEventListener('keyup', e => {
-    if (e.key === 'w' || e.key === 'W' || e.key === 'ц' || e.key === 'Ц') keys.w = false;
-    if (e.key === 's' || e.key === 'S' || e.key === 'ы' || e.key === 'Ы') keys.s = false;
-    if (e.key === 'a' || e.key === 'A' || e.key === 'ф' || e.key === 'Ф') keys.a = false;
-    if (e.key === 'd' || e.key === 'D' || e.key === 'в' || e.key === 'В') keys.d = false;
+    if(e.key === 'w' || e.key === 'W') keys.w = false;
+    if(e.key === 's' || e.key === 'S') keys.s = false;
+    if(e.key === 'a' || e.key === 'A') keys.a = false;
+    if(e.key === 'd' || e.key === 'D') keys.d = false;
 });
 
-// Тач-управление
-const joyZone = document.getElementById('joystick-zone');
-const joyKnob = document.getElementById('joystick-knob');
-const lookZone = document.getElementById('look-zone');
+// Mobile Joystick
+const joyZone = document.getElementById('joy-zone');
+const joyKnob = document.getElementById('joy-knob');
 
 joyZone.addEventListener('touchstart', e => {
     e.preventDefault();
-    const touch = e.changedTouches[0];
-    joyTouchId = touch.identifier;
-    touchJoyActive = true;
-}, { passive: false });
+    const t = e.changedTouches[0];
+    joyId = t.identifier;
+    joyActive = true;
+}, {passive: false});
 
 joyZone.addEventListener('touchmove', e => {
     e.preventDefault();
-    for (let touch of e.changedTouches) {
-        if (touch.identifier === joyTouchId) {
+    for(let t of e.changedTouches) {
+        if(t.identifier === joyId) {
             const rect = joyZone.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            let dx = touch.clientX - centerX;
-            let dy = touch.clientY - centerY;
-            
-            const maxDist = rect.width / 2;
+            let dx = t.clientX - (rect.left + rect.width/2);
+            let dy = t.clientY - (rect.top + rect.height/2);
+            const max = rect.width/2;
             const dist = Math.hypot(dx, dy);
-            if (dist > maxDist) {
-                dx = (dx / dist) * maxDist;
-                dy = (dy / dist) * maxDist;
-            }
+            if(dist > max) { dx = (dx/dist)*max; dy = (dy/dist)*max; }
             joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-            joyX = dx / maxDist;
-            joyY = dy / maxDist;
+            joyX = dx/max;
+            joyY = dy/max;
         }
     }
-}, { passive: false });
+}, {passive: false});
 
 joyZone.addEventListener('touchend', e => {
-    for (let touch of e.changedTouches) {
-        if (touch.identifier === joyTouchId) {
-            joyTouchActive = false;
-            joyTouchId = null;
-            joyX = 0; joyY = 0;
+    for(let t of e.changedTouches) {
+        if(t.identifier === joyId) {
+            joyActive = false; joyId = null; joyX = 0; joyY = 0;
             joyKnob.style.transform = `translate(0px, 0px)`;
         }
     }
 });
 
+// Mobile Look
+const lookZone = document.getElementById('look-zone');
 lookZone.addEventListener('touchstart', e => {
     e.preventDefault();
-    const touch = e.changedTouches[0];
-    lookTouchId = touch.identifier;
-    lastLookX = touch.clientX;
-    lastLookY = touch.clientY;
-}, { passive: false });
+    const t = e.changedTouches[0];
+    lookId = t.identifier;
+    lastX = t.clientX; lastY = t.clientY;
+}, {passive: false});
 
 lookZone.addEventListener('touchmove', e => {
     e.preventDefault();
-    for (let touch of e.changedTouches) {
-        if (touch.identifier === lookTouchId) {
-            const dx = touch.clientX - lastLookX;
-            const dy = touch.clientY - lastLookY;
-            lastLookX = touch.clientX;
-            lastLookY = touch.clientY;
-
-            PLAYER.yaw -= dx * 0.005;
-            PLAYER.pitch -= dy * 0.005;
-            
-            const maxPitch = Math.PI / 2 - 0.1;
-            PLAYER.pitch = Math.max(-maxPitch, Math.min(maxPitch, PLAYER.pitch));
+    for(let t of e.changedTouches) {
+        if(t.identifier === lookId) {
+            let dx = t.clientX - lastX;
+            let dy = t.clientY - lastY;
+            lastX = t.clientX; lastY = t.clientY;
+            STATE.yaw -= dx * 0.005;
+            STATE.pitch -= dy * 0.005;
+            STATE.pitch = Math.max(-Math.PI/2.2, Math.min(Math.PI/2.2, STATE.pitch));
         }
     }
-}, { passive: false });
+}, {passive: false});
 
 lookZone.addEventListener('touchend', e => {
-    for (let touch of e.changedTouches) {
-        if (touch.identifier === lookTouchId) {
-            lookTouchId = null;
-        }
+    for(let t of e.changedTouches) {
+        if(t.identifier === lookId) lookId = null;
     }
 });
 
-// UI Кнопки
-document.getElementById('btn-light').addEventListener('touchstart', e => { e.preventDefault(); toggleFlashlight(); });
-document.getElementById('btn-act').addEventListener('touchstart', e => { e.preventDefault(); interact(); });
-
-function toggleFlashlight() {
-    GAME_STATE.FLASHLIGHT_ON = !GAME_STATE.FLASHLIGHT_ON;
-    flashlight.visible = GAME_STATE.FLASHLIGHT_ON;
-    document.getElementById('btn-light').classList.toggle('on', GAME_STATE.FLASHLIGHT_ON);
-    AudioEngine.click();
-}
-
 // ============================================================================
-// 7. СИСТЕМА ВЗАИМОДЕЙСТВИЯ
+// 7. INTERACTION & GAME LOGIC
 // ============================================================================
 const raycaster = new THREE.Raycaster();
-const screenCenter = new THREE.Vector2(0, 0);
-let currentInteractable = null;
+raycaster.far = 3.5;
+const center = new THREE.Vector2(0, 0);
+let activeItem = null;
 
-function updateInteraction() {
-    if (!GAME_STATE.STARTED || GAME_STATE.PAUSED) return;
-    
-    raycaster.setFromCamera(screenCenter, camera);
-    raycaster.far = 3.5;
-    
+function checkInteraction() {
+    if(!STATE.started || STATE.paused) return;
+    raycaster.setFromCamera(center, camera);
     const meshes = interactables.map(i => i.mesh);
-    const intersects = raycaster.intersectObjects(meshes);
-    
-    if (intersects.length > 0) {
-        const hit = intersects[0];
-        const item = interactables.find(i => i.mesh === hit.object);
-        
-        if (item) {
-            currentInteractable = item;
-            document.getElementById('prompt').classList.add('show');
-            return;
+    const hits = raycaster.intersectObjects(meshes);
+
+    if(hits.length > 0) {
+        const item = interactables.find(i => i.mesh === hits[0].object);
+        if(item) {
+            const dist = camera.position.distanceTo(hits[0].point);
+            if(dist < 3.5) {
+                activeItem = item;
+                document.getElementById('interact-prompt').classList.add('show');
+                return;
+            }
         }
     }
-    
-    currentInteractable = null;
-    document.getElementById('prompt').classList.remove('show');
+    activeItem = null;
+    document.getElementById('interact-prompt').classList.remove('show');
 }
 
-function interact() {
-    if (!currentInteractable) return;
-    AudioEngine.click();
-    
-    const item = currentInteractable;
-    
-    if (item.type === 'document') {
-        showDocument(item.data.title, item.data.text);
-        GAME_STATE.CLUES_FOUND++;
-    }
-    else if (item.type === 'radio') {
-        showDocument('Радиоприемник', 'Ты крутишь ручку настройки. Сквозь белый шум пробивается женский голос: "...Грейхейвен... пропал ребенок... полиция ищет..."<br><br>Затем связь обрывается.');
-        AudioEngine.playTone(300, 'sawtooth', 2, 0.1);
-    }
-    else if (item.type === 'tv') {
-        showDocument('Телевизор', 'Экран мерцает синим светом. На мгновение ты видишь свое отражение. Оно улыбается. Ты — нет.');
-    }
-    else if (item.type === 'door') {
-        if (GAME_STATE.HAS_KEY) {
-            openDoor();
+function doInteract() {
+    if(!activeItem) return;
+    AudioSys.click();
+
+    if(activeItem.type === 'document') {
+        showDocument(activeItem.title, activeItem.text);
+        if(activeItem.title === 'Пятно на столе') triggerSanityDrop(10);
+    } else if(activeItem.type === 'tv') {
+        showDocument('Телевизор', 'Экран мерцает. Сквозь белый шум ты слышишь голос. Это твой голос. <br><br>"Ты сам сделал это. Ты сам запер её там. Не притворяйся, что не помнишь."');
+        triggerSanityDrop(20);
+    } else if(activeItem.type === 'door') {
+        if(STATE.flags.foundKey) {
+            triggerEnding('truth');
         } else {
-            showDocument('Дверь', 'Заперто. Похоже, ключ остался в замке снаружи. Придется искать другой выход.');
+            showDocument('Дверь', 'Заперто. Ключ остался снаружи. Нужно найти запасной. Возможно, он в ванной.');
         }
+    } else if(activeItem.type === 'lamp') {
+        AudioSys.click();
+        const light = scene.children.find(c => c.isPointLight && c.position.x === -0.8);
+        if(light) light.visible = !light.visible;
     }
 }
 
 // ============================================================================
-// 8. UI И МОДАЛЬНЫЕ ОКНА
+// 8. UI FUNCTIONS
 // ============================================================================
 function showDocument(title, text) {
-    GAME_STATE.PAUSED = true;
+    STATE.paused = true;
     document.getElementById('doc-content').innerHTML = `<h2>${title}</h2><p>${text}</p>`;
     document.getElementById('modal-doc').classList.add('active');
-    document.getElementById('prompt').classList.remove('show');
 }
 
 document.getElementById('btn-close-doc').addEventListener('click', () => {
     document.getElementById('modal-doc').classList.remove('active');
-    GAME_STATE.PAUSED = false;
+    STATE.paused = false;
 });
 
-function showDialog(speaker, text, choices) {
-    GAME_STATE.PAUSED = true;
-    document.getElementById('dlg-speaker').innerText = speaker;
-    document.getElementById('dlg-text').innerHTML = text;
-    const choicesDiv = document.getElementById('dlg-choices');
-    choicesDiv.innerHTML = '';
+function triggerSanityDrop(amount) {
+    STATE.sanity -= amount;
+    if(STATE.sanity < 0) STATE.sanity = 0;
     
-    choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.innerText = choice.text;
-        btn.onclick = () => {
-            document.getElementById('modal-dialog').classList.remove('active');
-            if (choice.action) choice.action();
-            if (!choice.next) GAME_STATE.PAUSED = false;
-        };
-        choicesDiv.appendChild(btn);
-    });
-    
-    document.getElementById('modal-dialog').classList.add('active');
+    // Apply visual effect based on sanity
+    document.getElementById('sanity-effect').style.opacity = (100 - STATE.sanity) / 100;
+    AudioSys.playTone(100, 'sawtooth', 2, 0.2);
+
+    if(STATE.sanity <= 50 && !STATE.flags.reflectionTriggered) {
+        STATE.flags.reflectionTriggered = true;
+        // "Reflection" effect: Room changes
+        setTimeout(() => {
+            showDialog('Система', 'Голова раскалывается. Ты смотришь на кровать. Там кто-то сидит. Ты моргаешь — никого нет. Но кровать смята. Это не твое воображение.', [
+                { text: 'Найти выход (нужен ключ)', action: () => { STATE.flags.foundKey = true; STATE.inventory.push({name: 'Ржавый ключ', desc: 'Найден в ванной'}); } }
+            ]);
+            // Change TV color
+            scene.userData.tvScreen.material.emissive.setHex(0xff0000);
+            scene.userData.tvLight.color.setHex(0xff0000);
+        }, 2000);
+    }
 }
 
-// Инвентарь
-document.getElementById('btn-inv').addEventListener('touchstart', e => {
-    e.preventDefault();
-    if (!GAME_STATE.STARTED) return;
-    GAME_STATE.PAUSED = true;
+function triggerEnding(type) {
+    STATE.started = false;
+    document.getElementById('hud').classList.remove('active');
+    document.getElementById('end-screen').style.display = 'flex';
     
+    if(type === 'truth') {
+        document.getElementById('end-title').innerText = 'ПРАВДА';
+        document.getElementById('end-text').innerText = 'Ты открываешь дверь. В коридоре темно. Ты уходишь, зная, что сделал. Полиция найдет тело в ванной. Тебя найдут через три дня на заброшенной заправке. Ты оставишь предсмертную записку, в которой не будет ни слова правды.';
+    } else {
+        document.getElementById('end-title').innerText = 'ТРАГЕДИЯ';
+        document.getElementById('end-text').innerText = 'Ты остаешься в номере. Звонки прекращаются. Свет гаснет. Ты смотришь в зеркало, но видишь не себя. Мотель поглощает тебя.';
+    }
+}
+
+function showDialog(speaker, text, choices) {
+    STATE.paused = true;
+    document.getElementById('dlg-speaker').innerText = speaker;
+    document.getElementById('dlg-text').innerHTML = text;
+    const c = document.getElementById('dlg-choices');
+    c.innerHTML = '';
+    choices.forEach(ch => {
+        const b = document.createElement('button');
+        b.className = 'choice-btn';
+        b.innerText = ch.text;
+        b.onclick = () => {
+            document.getElementById('modal-dialogue').classList.remove('active');
+            if(ch.action) ch.action();
+            STATE.paused = false;
+        };
+        c.appendChild(b);
+    });
+    document.getElementById('modal-dialogue').classList.add('active');
+}
+
+// Buttons
+document.getElementById('btn-interact').addEventListener('touchstart', e => { e.preventDefault(); doInteract(); });
+document.getElementById('btn-flashlight').addEventListener('touchstart', e => { 
+    e.preventDefault(); 
+    toggleLight(); 
+});
+
+function toggleLight() {
+    const fl = scene.userData.flashlight;
+    fl.visible = !fl.visible;
+    document.getElementById('btn-flashlight').classList.toggle('active', fl.visible);
+    AudioSys.click();
+}
+
+document.getElementById('btn-inventory').addEventListener('touchstart', e => {
+    e.preventDefault();
+    STATE.paused = true;
     const grid = document.getElementById('inv-grid');
     grid.innerHTML = '';
-    
-    if (GAME_STATE.INVENTORY.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#666;">Пусто</div>';
-    } else {
-        GAME_STATE.INVENTORY.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'inv-item';
-            div.innerHTML = `<div class="inv-title">${item.name}</div><div class="inv-desc">${item.desc}</div>`;
-            grid.appendChild(div);
+    if(STATE.inventory.length === 0) grid.innerHTML = '<div style="color:#555">Пусто</div>';
+    else {
+        STATE.inventory.forEach(i => {
+            grid.innerHTML += `<div class="inv-item"><div class="inv-item-name">${i.name}</div><div class="inv-item-desc">${i.desc}</div></div>`;
         });
     }
-    
-    document.getElementById('modal-inv').classList.add('active');
+    document.getElementById('modal-inventory').classList.add('active');
 });
 
 document.getElementById('btn-close-inv').addEventListener('click', () => {
-    document.getElementById('modal-inv').classList.remove('active');
-    GAME_STATE.PAUSED = false;
+    document.getElementById('modal-inventory').classList.remove('active');
+    STATE.paused = false;
 });
 
 // ============================================================================
-// 9. СЮЖЕТ И ТРИГГЕРЫ
-// ============================================================================
-function openDoor() {
-    AudioEngine.door();
-    // Fade out and trigger ending
-    document.getElementById('damage-flash').style.opacity = 1;
-    setTimeout(() => {
-        document.getElementById('end-title').innerText = 'КОНЕЦ ГЛАВЫ 1';
-        document.getElementById('end-text').innerText = 'Ты выходишь в коридор. Ледяной ветер пробирает до костей. Но самое страшное начинается сейчас...';
-        document.getElementById('modal-ending').classList.add('active');
-    }, 1000);
-}
-
-// Триггер события: Звонок в дверь через 15 секунд после старта
-setTimeout(() => {
-    if (!GAME_STATE.STARTED) return;
-    AudioEngine.phone();
-    setTimeout(() => {
-        showDialog('Неизвестный', 'Я знаю, что ты в номере 07. Ключ от двери под ковриком. Забери то, что принадлежит тебе, и уходи. У тебя 5 минут.', [
-            { text: 'Кто это?', next: true, action: () => {
-                showDialog('Неизвестный', 'Ты знаешь кто. Иди к черному ходу.', [
-                    { text: 'Положить трубку', action: () => {
-                        GAME_STATE.HAS_KEY = true;
-                        GAME_STATE.INVENTORY.push({name: 'Ключ от номера 07', desc: 'Старый латунный ключ'});
-                        showDocument('Система', 'Вы получили Ключ от номера 07.<br><br>Цель обновлена: Покиньте комнату.');
-                    }}
-                ]);
-            }}
-        ]);
-    }, 2000);
-}, 15000);
-
-// ============================================================================
-// 10. ГЛАВНЫЙ ЦИКЛ ИГРЫ
+// 9. MAIN LOOP
 // ============================================================================
 let lastTime = performance.now();
 let stepTimer = 0;
-let bobTimer = 0;
+let bobTime = 0;
 
 function animate() {
     requestAnimationFrame(animate);
-    
-    const time = performance.now();
-    const dt = Math.min((time - lastTime) / 1000, 0.1);
-    lastTime = time;
-    
-    if (GAME_STATE.STARTED && !GAME_STATE.PAUSED) {
-        // 1. Движение
-        let moveX = (keys.d ? 1 : 0) - (keys.a ? 1 : 0) + joyX;
-        let moveZ = (keys.s ? 1 : 0) - (keys.w ? 1 : 0) + joyY;
-        
-        const length = Math.hypot(moveX, moveZ);
-        if (length > 1) {
-            moveX /= length;
-            moveZ /= length;
-        }
-        
-        const speed = PLAYER.speed * dt;
-        const forward = new THREE.Vector3(-Math.sin(PLAYER.yaw), 0, -Math.cos(PLAYER.yaw));
-        const right = new THREE.Vector3(Math.cos(PLAYER.yaw), 0, -Math.sin(PLAYER.yaw));
-        
+    const now = performance.now();
+    const dt = Math.min((now - lastTime) / 1000, 0.1);
+    lastTime = now;
+
+    if(STATE.started && !STATE.paused) {
+        // Movement
+        let moveX = (keys.d?1:0) - (keys.a?1:0) + joyX;
+        let moveZ = (keys.s?1:0) - (keys.w?1:0) + joyY;
+        const len = Math.hypot(moveX, moveZ);
+        if(len > 1) { moveX /= len; moveZ /= len; }
+
+        const speed = 3.0 * dt;
+        const forward = new THREE.Vector3(-Math.sin(STATE.yaw), 0, -Math.cos(STATE.yaw));
+        const right = new THREE.Vector3(Math.cos(STATE.yaw), 0, -Math.sin(STATE.yaw));
+
         const velocity = new THREE.Vector3()
             .addScaledVector(forward, -moveZ * speed)
             .addScaledVector(right, moveX * speed);
-            
-        const newPos = PLAYER.pos.clone().add(velocity);
+
+        const newPos = camera.position.clone().add(velocity);
         
-        // Коллизии
-        const playerBox = new THREE.Box3().setFromCenterAndSize(
-            new THREE.Vector3(newPos.x, 0.9, newPos.z),
-            new THREE.Vector3(0.6, 1.8, 0.6)
+        // Collision Check (AABB)
+        const pBox = new THREE.Box3().setFromCenterAndSize(
+            new THREE.Vector3(newPos.x, 1.0, newPos.z),
+            new THREE.Vector3(0.6, 2.0, 0.6)
         );
         
         let collided = false;
-        for (let box of colliders) {
-            if (playerBox.intersectsBox(box)) {
-                collided = true; break;
-            }
+        for(let box of colliders) {
+            if(pBox.intersectsBox(box)) { collided = true; break; }
         }
-        
-        if (!collided) {
-            PLAYER.pos.copy(newPos);
+
+        if(!collided) {
+            camera.position.x = newPos.x;
+            camera.position.z = newPos.z;
             
-            // Покачивание камеры (Head Bobbing) и шаги
-            if (length > 0.1) {
-                bobTimer += dt * 12;
+            // Head Bobbing
+            if(len > 0.1) {
+                bobTime += dt * 12;
                 stepTimer -= dt;
-                if (stepTimer <= 0) {
-                    AudioEngine.step();
-                    stepTimer = 0.4;
-                }
-            } else {
-                bobTimer = 0;
+                if(stepTimer <= 0) { AudioSys.footstep(); stepTimer = 0.4; }
             }
         }
-        
-        // 2. Применение к камере
-        camera.position.copy(PLAYER.pos);
-        const bobY = Math.sin(bobTimer) * 0.04;
-        camera.position.y += bobY;
-        
+
+        // Apply Camera
+        camera.position.y = 1.6 + Math.sin(bobTime) * 0.03;
         camera.rotation.set(0, 0, 0);
-        camera.rotateY(PLAYER.yaw);
-        camera.rotateX(PLAYER.pitch);
-        
-        // 3. Проверка интеракций
-        updateInteraction();
-        
-        // 4. Динамика телевизора
-        if (Math.random() > 0.9) {
-            tvScreen.material.color.setHex(Math.random() > 0.5 ? 0x0000ff : 0x000088);
-            tvLight.color.setHex(Math.random() > 0.5 ? 0x0000ff : 0x000088);
+        camera.rotateY(STATE.yaw);
+        camera.rotateX(STATE.pitch);
+
+        checkInteraction();
+
+        // TV Static effect
+        if(Math.random() > 0.95) {
+            const tv = scene.userData.tvScreen;
+            tv.material.emissiveIntensity = Math.random() * 2;
+            scene.userData.tvLight.intensity = Math.random() * 2;
         }
-        
-        // 5. Обновление времени для VHS шейдера
-        vhsPass.uniforms.time.value = time * 0.001;
     }
-    
+
     composer.render();
 }
 
 // ============================================================================
-// 11. ИНИЦИАЛИЗАЦИЯ И СТАРТ
+// 10. INITIALIZATION
 // ============================================================================
+document.getElementById('btn-start').addEventListener('click', () => {
+    AudioSys.init();
+    const bar = document.getElementById('loading-bar');
+    bar.style.width = '100%';
+    
+    setTimeout(() => {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('hud').classList.add('active');
+        STATE.started = true;
+        
+        // Initial Game Event
+        setTimeout(() => {
+            AudioSys.phoneRing();
+            setTimeout(() => {
+                showDialog('Телефон в номере', 'Ты поднимаешь трубку. Слышен только дождь и тяжелое дыхание. <br><br>"Ванная. Посмотри в ванной."', [
+                    { text: 'Проверить ванную', action: () => { STATE.flags.openedBathroom = true; } },
+                    { text: 'Бросить трубку', action: () => { triggerSanityDrop(5); } }
+                ]);
+            }, 3000);
+        }, 1000);
+    }, 1000);
+});
+
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -929,42 +883,7 @@ window.addEventListener('resize', () => {
     composer.setSize(window.innerWidth, window.innerHeight);
 });
 
-document.getElementById('btn-boot').addEventListener('click', () => {
-    document.getElementById('btn-boot').style.display = 'none';
-    const loader = document.getElementById('load-indicator');
-    loader.style.display = 'block';
-    
-    // Имитация загрузки
-    setTimeout(() => {
-        document.getElementById('start-screen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('ui-layer').classList.add('active');
-            GAME_STATE.STARTED = true;
-            AudioEngine.init();
-            
-            // Появление в комнате
-            PLAYER.pos.set(0, 1.6, 4);
-            PLAYER.yaw = 0;
-            PLAYER.pitch = 0;
-            
-            // Включаем фонарь
-            flashlight.visible = true;
-            
-            // Стартовый диалог
-            setTimeout(() => {
-                showDialog('Голос в голове', 'Где я? Почему так темно? Мне нужно найти выход из этого номера...', [
-                    { text: 'Осмотреться', action: () => {} }
-                ]);
-            }, 1000);
-            
-            animate();
-        }, 1000);
-    }, 1500);
-});
-
-// Запуск рендера для фона
-composer.render();
+animate();
 </script>
 </body>
 </html>
