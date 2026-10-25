@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nightshade">
+<meta name="theme-color" content="#02030a">
+<title>NIGHTSHADE MOTEL</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#000; color:#c8c8c8;
+    font-family: 'Courier New', monospace; touch-action:none; }
+  #game { display:block; width:100vw; height:100vh; }
+  #ui { position:fixed; inset:0; pointer-events:none; }
+  .overlay { position:absolute; inset:0; display:none; pointer-events:auto;
+    background: rgba(2,3,10,0.92); flex-direction:column; align-items:center;
+    justify-content:center; padding: max(env(safe-area-inset-top), 20px) 20px max(env(safe-area-inset-bottom), 20px); }
+  .overlay.active { display:flex; }
+
+  /* Title screen */
+  #title h1 { font-size: clamp(28px,7vw,54px); color:#7a1f1f; letter-spacing:4px;
+    text-shadow: 0 0 20px #7a1f1f; margin-bottom:8px; text-align:center; }
+  #title .subtitle { color:#555; font-size:12px; letter-spacing:3px; margin-bottom:40px; text-transform:uppercase; }
+  #title button, .menu-btn { background: transparent; border:1px solid #3a3a3a; color:#aaa;
+    padding:14px 32px; margin:6px; font-family:inherit; font-size:16px; letter-spacing:2px;
+    cursor:pointer; min-width:220px; transition: 0.2s; }
+  #title button:hover, #title button:active, .menu-btn:hover, .menu-btn:active {
+    background:#2a1a1a; border-color:#7a1f1f; color:#e0e0e0; }
+  #title button:disabled { opacity:0.3; cursor:default; }
+  .menu-btn.small { padding:10px 20px; min-width:140px; font-size:14px; }
+
+  /* In-game HUD */
+  #hud { position:absolute; inset:0; display:none; }
+  #hud.active { display:block; }
+
+  #joystick { position:absolute; left:20px; bottom:calc(20px + env(safe-area-inset-bottom));
+    width:140px; height:140px; border-radius:50%; border:2px solid rgba(160,160,160,0.25);
+    background: rgba(20,20,30,0.35); pointer-events:auto; }
+  #joy-knob { position:absolute; width:60px; height:60px; left:40px; top:40px;
+    border-radius:50%; background:rgba(200,200,200,0.3); }
+
+  #lookzone { position:absolute; right:0; top:0; bottom:0; width:55%; pointer-events:auto; }
+
+  #buttons { position:absolute; right:20px; bottom:calc(20px + env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; gap:10px; align-items:flex-end; pointer-events:none; }
+  .action-btn { pointer-events:auto; width:60px; height:60px; border-radius:50%;
+    border:2px solid rgba(160,160,160,0.4); background: rgba(20,20,30,0.55);
+    color:#ccc; font-size:11px; font-family:inherit; text-align:center;
+    display:flex; align-items:center; justify-content:center; }
+  .action-btn:active { background: rgba(150,30,30,0.5); }
+  .action-btn.big { width:80px; height:80px; font-size:13px; }
+
+  #prompt { position:absolute; bottom:180px; left:50%; transform:translateX(-50%);
+    color:#e0d0a0; font-size:14px; letter-spacing:1px; text-align:center;
+    background: rgba(10,10,15,0.7); padding:8px 16px; border-radius:4px;
+    display:none; pointer-events:none; max-width:80%; }
+  #prompt.active { display:block; }
+
+  #objective { position:absolute; top:calc(20px + env(safe-area-inset-top)); left:20px;
+    right:20px; color:#a0a0a0; font-size:13px; letter-spacing:1px;
+    background: rgba(10,10,15,0.5); padding:10px 14px; border-left:2px solid #7a1f1f; }
+
+  /* Modal overlays */
+  .modal { position:absolute; inset:0; display:none; pointer-events:auto;
+    background: rgba(0,0,0,0.88); z-index:10; overflow-y:auto;
+    padding: max(env(safe-area-inset-top), 30px) 24px max(env(safe-area-inset-bottom), 30px); }
+  .modal.active { display:block; }
+  .modal-content { max-width:640px; margin:40px auto; }
+  .modal-content h2 { color:#c0a070; font-size:20px; letter-spacing:3px; margin-bottom:20px; text-transform:uppercase; }
+  .modal-content p { color:#b8b8b8; font-size:15px; line-height:1.65; margin-bottom:14px; font-family:Georgia,serif; }
+  .modal-content .paper { background: #1a1612; border:1px solid #3a3024;
+    padding:24px; margin:20px 0; font-family:'Courier New',monospace; color:#c0b090;
+    font-size:14px; line-height:1.7; white-space:pre-wrap; }
+  .modal-content .paper.blood { color:#a04040; border-color:#4a1818; }
+  .modal-content button { background: transparent; border:1px solid #444; color:#aaa;
+    padding:12px 24px; margin:8px 4px 0 0; font-family:inherit; font-size:15px; cursor:pointer; }
+  .modal-content button:active { background:#2a1a1a; border-color:#7a1f1f; }
+  .choice-btn { display:block; width:100%; text-align:left; padding:14px 18px !important;
+    margin:8px 0 !important; line-height:1.5; font-size:14px !important; }
+
+  /* Inventory */
+  .inv-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:12px; }
+  .inv-item { background:#141420; border:1px solid #333; padding:14px; cursor:pointer; transition:0.2s; }
+  .inv-item:active { border-color:#7a1f1f; }
+  .inv-item .name { color:#e0d0a0; font-size:13px; margin-bottom:6px; }
+  .inv-item .desc { color:#888; font-size:11px; line-height:1.4; }
+
+  /* Ending */
+  #ending .modal-content h2 { font-size:clamp(24px,6vw,36px); text-align:center; }
+  #ending .modal-content p { font-size:16px; text-align:center; }
+  #ending .ending-title { color:#c0a070; font-size:14px; letter-spacing:4px; text-align:center; margin-bottom:30px; }
+  #ending.tragic h2 { color:#7a1f1f; }
+  #ending.truth h2 { color:#80a040; }
+  #ending.ambiguous h2 { color:#c0a070; }
+  #ending.secret h2 { color:#a070c0; }
+
+  /* Vignette */
+  #vignette { position:absolute; inset:0; pointer-events:none;
+    box-shadow: inset 0 0 200px 40px rgba(0,0,0,0.85); display:none; }
+  #vignette.active { display:block; }
+
+  /* Damage flash */
+  #flash { position:absolute; inset:0; background:#600; opacity:0; pointer-events:none;
+    transition: opacity 0.15s; }
+
+  /* Mobile hint */
+  #rotate-hint { position:fixed; inset:0; background:#000; color:#666;
+    display:none; align-items:center; justify-content:center; text-align:center;
+    padding:40px; font-size:14px; z-index:100; }
+  @media (max-height:500px) and (orientation:portrait) {
+    #rotate-hint { display:flex; }
+  }
+
+  /* Fade overlay */
+  #fade { position:absolute; inset:0; background:#000; opacity:0; pointer-events:none;
+    transition: opacity 0.8s; z-index:5; }
+  #fade.active { opacity:1; pointer-events:auto; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="ui">
+  <div id="fade"></div>
+  <div id="vignette"></div>
+  <div id="flash"></div>
+
+  <!-- TITLE -->
+  <div id="title" class="overlay active">
+    <h1>NIGHTSHADE MOTEL</h1>
+    <div class="subtitle">Greyhaven · 1998</div>
+    <button id="btn-new">НОВАЯ ИГРА</button>
+    <button id="btn-continue" disabled>ПРОДОЛЖИТЬ</button>
+    <button id="btn-settings">НАСТРОЙКИ</button>
+    <button id="btn-about">ОБ ИГРЕ</button>
+  </div>
+
+  <!-- IN-GAME HUD -->
+  <div id="hud">
+    <div id="objective">Осмотритесь</div>
+    <div id="prompt"></div>
+    <div id="joystick"><div id="joy-knob"></div></div>
+    <div id="lookzone"></div>
+    <div id="buttons">
+      <button class="action-btn big" id="btn-interact">ДЕЙСТВИЕ</button>
+      <button class="action-btn" id="btn-flashlight">ФОНАРЬ</button>
+      <button class="action-btn" id="btn-crouch">НИЗКО</button>
+      <button class="action-btn" id="btn-inventory">РЮКЗАК</button>
+      <button class="action-btn" id="btn-pause">ПАУЗА</button>
+    </div>
+  </div>
+
+  <!-- DIALOGUE -->
+  <div id="dialogue" class="modal">
+    <div class="modal-content">
+      <h2 id="dlg-speaker">—</h2>
+      <p id="dlg-text"></p>
+      <div id="dlg-choices"></div>
+    </div>
+  </div>
+
+  <!-- DOCUMENT -->
+  <div id="document" class="modal">
+    <div class="modal-content">
+      <h2 id="doc-title">Документ</h2>
+      <div id="doc-body" class="paper"></div>
+      <button id="doc-close">ЗАКРЫТЬ</button>
+    </div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div id="inventory" class="modal">
+    <div class="modal-content">
+      <h2>Рюкзак</h2>
+      <div id="inv-list" class="inv-grid"></div>
+      <button id="inv-close">ЗАКРЫТЬ</button>
+    </div>
+  </div>
+
+  <!-- PAUSE -->
+  <div id="pause" class="modal">
+    <div class="modal-content">
+      <h2>Пауза</h2>
+      <button class="menu-btn" id="pause-resume">ПРОДОЛЖИТЬ</button>
+      <button class="menu-btn" id="pause-save">СОХРАНИТЬ</button>
+      <button class="menu-btn" id="pause-settings">НАСТРОЙКИ</button>
+      <button class="menu-btn" id="pause-menu">В ГЛАВНОЕ МЕНЮ</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="settings" class="modal">
+    <div class="modal-content">
+      <h2>Настройки</h2>
+      <p>Громкость: <span id="vol-val">70</span>%</p>
+      <input type="range" min="0" max="100" value="70" id="vol-slider" style="width:100%;margin-bottom:20px">
+      <p>Чувствительность камеры: <span id="sens-val">50</span></p>
+      <input type="range" min="10" max="100" value="50" id="sens-slider" style="width:100%;margin-bottom:20px">
+      <p>Разрешение рендера: <span id="qual-val">Среднее</span></p>
+      <input type="range" min="0" max="2" value="1" id="qual-slider" style="width:100%;margin-bottom:20px">
+      <button id="settings-close">ЗАКРЫТЬ</button>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div id="about" class="modal">
+    <div class="modal-content">
+      <h2>NIGHTSHADE MOTEL</h2>
+      <p>Психологический хоррор в одном файле. Один мотель. Одна ночь. Никаких ответов.</p>
+      <p>Управление: левый джойстик — движение, свайп по правой части экрана — камера, кнопки справа — действия.</p>
+      <p>Совет: читайте всё, что найдёте. Некоторые записи меняются.</p>
+      <button id="about-close">ЗАКРЫТЬ</button>
+    </div>
+  </div>
+
+  <!-- ENDING -->
+  <div id="ending" class="modal">
+    <div class="modal-content">
+      <div class="ending-title">КОНЦОВКА</div>
+      <h2 id="end-title"></h2>
+      <p id="end-text"></p>
+      <button id="end-restart">НАЧАТЬ ЗАНОВО</button>
+    </div>
+  </div>
+
+  <div id="rotate-hint">Поверните телефон горизонтально для игры</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// =================================================================
+// STATE
+// =================================================================
+const state = {
+  chapter: 1,
+  hasKey07: false,
+  hasBasementKey: false,
+  hasFlashlight: true,
+  flashlightOn: true,
+  stress: 0,
+  inventory: [],
+  flags: {
+    readNote: false,
+    phoneRang: false,
+    answeredPhone: false,
+    readJournal: false,
+    readNewspaper: false,
+    readBasementNote: false,
+    doorRelocked: false,
+    metVera: false,
+    ending: null
+  },
+  photoPeople: 3,
+  position: { x: 5, y: 0, z: 15 },
+  yaw: 0
+};
+
+// =================================================================
+// SAVE / LOAD
+// =================================================================
+function saveGame() {
+  try {
+    localStorage.setItem('nightshade_save', JSON.stringify(state));
+  } catch(e) { console.warn('save failed', e); }
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem('nightshade_save');
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    Object.assign(state, s);
+    return true;
+  } catch(e) { return false; }
+}
+
+function hasSave() {
+  return !!localStorage.getItem('nightshade_save');
+}
+
+// =================================================================
+// AUDIO (procedural)
+// =================================================================
+const audio = {
+  ctx: null,
+  master: null,
+  rainNode: null,
+  settings: { vol: 0.7 },
+  init() {
+    if (this.ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain();
+    this.master.gain.value = this.settings.vol;
+    this.master.connect(this.ctx.destination);
+  },
+  setVolume(v) {
+    this.settings.vol = v;
+    if (this.master) this.master.gain.value = v;
+  },
+  tone(freq, dur, type='sine', gain=0.15, attack=0.01) {
+    if (!this.ctx) return;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    const t = this.ctx.currentTime;
+    g.gain.setValueAtTime(0.001, t);
+    g.gain.linearRampToValueAtTime(gain, t + attack);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g); g.connect(this.master);
+    o.start(t); o.stop(t + dur + 0.05);
+  },
+  footstep() {
+    this.tone(60 + Math.random()*30, 0.09, 'triangle', 0.06);
+  },
+  door() {
+    if (!this.ctx) return;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(240, this.ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.6);
+    g.gain.setValueAtTime(0.001, this.ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.08, this.ctx.currentTime + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+    o.connect(g); g.connect(this.master);
+    o.start(); o.stop(this.ctx.currentTime + 0.9);
+  },
+  phone() {
+    // old rotary phone ring
+    const ringOnce = (delay) => {
+      setTimeout(() => {
+        for (let i = 0; i < 6; i++) {
+          setTimeout(() => this.tone(900, 0.08, 'square', 0.08), i * 60);
+          setTimeout(() => this.tone(1100, 0.08, 'square', 0.08), i * 60 + 30);
+        }
+      }, delay);
+    };
+    ringOnce(0);
+    ringOnce(1200);
+    ringOnce(2400);
+  },
+  thunder() {
+    this.tone(45, 2.0, 'sawtooth', 0.25, 0.1);
+    setTimeout(() => this.tone(35, 1.5, 'sawtooth', 0.15, 0.05), 200);
+  },
+  whisper() {
+    if (!this.ctx) return;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1500;
+    filter.Q.value = 3;
+    o.type = 'sawtooth';
+    o.frequency.value = 130 + Math.random()*80;
+    g.gain.setValueAtTime(0.001, this.ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.04, this.ctx.currentTime + 0.4);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 2.5);
+    o.connect(filter); filter.connect(g); g.connect(this.master);
+    o.start(); o.stop(this.ctx.currentTime + 2.6);
+  },
+  startRain() {
+    if (!this.ctx || this.rainNode) return;
+    const bufSize = this.ctx.sampleRate * 3;
+    const buffer = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random()*2-1) * 0.4;
+    const src = this.ctx.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 1200;
+    filter.Q.value = 0.5;
+    const g = this.ctx.createGain();
+    g.gain.value = 0.18;
+    src.connect(filter); filter.connect(g); g.connect(this.master);
+    src.start();
+    this.rainNode = src;
+  }
+};
+
+// =================================================================
+// THREE.JS SETUP
+// =================================================================
+const canvas = document.getElementById('game');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x02030a);
+renderer.shadowMap.enabled = false;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x02030a, 0.04);
+
+const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 80);
+
+// Ambient + very dim moonlight
+scene.add(new THREE.AmbientLight(0x0a1220, 0.4));
+const moon = new THREE.DirectionalLight(0x3a4a6a, 0.25);
+moon.position.set(-5, 15, 10);
+scene.add(moon);
+
+// Player state
+const player = {
+  pos: new THREE.Vector3(state.position.x, 1.6, state.position.z),
+  yaw: state.yaw || 0,
+  pitch: 0,
+  vel: new THREE.Vector3(),
+  speed: 2.6,
+  crouch: false,
+  flashlight: true
+};
+
+// Flashlight
+const flashlight = new THREE.SpotLight(0xfff2d0, 3.0, 16, Math.PI/6, 0.4, 1.2);
+flashlight.castShadow = false;
+const flashlightTarget = new THREE.Object3D();
+scene.add(flashlightTarget);
+flashlight.target = flashlightTarget;
+camera.add(flashlight);
+camera.add(flashlightTarget);
+flashlightTarget.position.set(0, 0, -1);
+flashlight.position.set(0.15, -0.1, 0);
+
+// Simple hand
+const handGeo = new THREE.BoxGeometry(0.08, 0.08, 0.35);
+const handMat = new THREE.MeshStandardMaterial({ color: 0x8a6a55, roughness: 0.9 });
+const hand = new THREE.Mesh(handGeo, handMat);
+hand.position.set(0.22, -0.25, -0.4);
+camera.add(hand);
+scene.add(camera);
+
+// =================================================================
+// WORLD BUILDING
+// =================================================================
+const collisionBoxes = []; // {min: Vector3, max: Vector3, doorRef}
+const interactables = []; // {mesh, label, action, dist}
+const worldObjects = {};
+
+function box(x, y, z, w, h, d, color, opts={}) {
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const mat = new THREE.MeshStandardMaterial({
+    color,
+    roughness: opts.roughness ?? 0.9,
+    metalness: opts.metalness ?? 0.05,
+    emissive: opts.emissive ?? 0x000000,
+    emissiveIntensity: opts.emissiveIntensity ?? 0,
+    transparent: opts.transparent ?? false,
+    opacity: opts.opacity ?? 1
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, y, z);
+  scene.add(mesh);
+  return mesh;
+}
+
+function wall(x, y, z, w, h, d, color=0x1a1a20) {
+  const mesh = box(x, y, z, w, h, d, color);
+  collisionBoxes.push({
+    min: new THREE.Vector3(x - w/2, y - h/2, z - d/2),
+    max: new THREE.Vector3(x + w/2, y + h/2, z + d/2),
+    doorRef: null
+  });
+  return mesh;
+}
+
+function addInteractable(mesh, label, action, dist=2.8) {
+  const item = { mesh, label, action, dist };
+  interactables.push(item);
+  return item;
+}
+
+// ---------- EXTERIOR / PARKING LOT ----------
+// ground
+box(0, -0.05, 5, 60, 0.1, 60, 0x0a0a0d, { roughness: 1 });
+// puddles (thin emissive planes)
+for (let i = 0; i < 6; i++) {
+  const p = box(
+    (Math.random()-0.5)*20, 0.005, (Math.random()-0.5)*20,
+    1.5 + Math.random(), 0.01, 1.5 + Math.random(),
+    0x1a2a4a, { emissive: 0x1a2a4a, emissiveIntensity: 0.2, roughness: 0.1, metalness: 0.7 }
+  );
+}
+
+// forest of simple trees (cones + cylinders)
+for (let i = 0; i < 25; i++) {
+  const angle = Math.random() * Math.PI * 2;
+  const rad = 14 + Math.random() * 15;
+  const tx = Math.cos(angle) * rad;
+  const tz = Math.sin(angle) * rad + 5;
+  if (Math.abs(tx) < 8 && Math.abs(tz) < 8) continue;
+  const trunk = box(tx, 1, tz, 0.3, 2, 0.3, 0x0a0a0a);
+  const foliage = new THREE.Mesh(
+    new THREE.ConeGeometry(1.2, 3, 6),
+    new THREE.MeshStandardMaterial({ color: 0x0a1010, roughness: 1 })
+  );
+  foliage.position.set(tx, 3, tz);
+  scene.add(foliage);
+}
+
+// Player's car
+const carBody = box(5, 0.5, 15, 4, 1.2, 2, 0x1a1a1a, { roughness: 0.4, metalness: 0.6 });
+const carTop = box(5, 1.3, 15, 2.5, 0.8, 1.8, 0x0d0d0d, { roughness: 0.4, metalness: 0.6 });
+// headlights
+box(6.9, 0.6, 14.2, 0.1, 0.3, 0.4, 0xffeeaa, { emissive: 0xffeeaa, emissiveIntensity: 2 });
+box(6.9, 0.6, 15.8, 0.1, 0.3, 0.4, 0xffeeaa, { emissive: 0xffeeaa, emissiveIntensity: 2 });
+
+// ---------- RECEPTION BUILDING ----------
+// Outer shell
+wall(0, 2, 0, 10, 4, 0.2); // south wall of reception (front)
+// front wall with gap for door
+wall(-2.75, 2, 0, 4.5, 4, 0.2); // left of door
+wall(2.75, 2, 0, 4.5, 4, 0.2); // right of door
+// door frame gap from x=-0.5 to 0.5
+wall(0, 4, 0, 10, 0.2, 0.2); // top
+
+wall(0, 2, -8, 10, 4, 0.2); // north wall of reception
+wall(-5, 2, -4, 0.2, 4, 8); // west wall
+wall(5, 2, -4, 0.2, 4, 8); // east wall
+
+// floor + ceiling
+box(0, 0.02, -4, 10, 0.05, 8, 0x141416, { roughness: 1 });
+box(0, 3.9, -4, 10, 0.05, 8, 0x08080a, { roughness: 1 });
+
+// Reception counter
+const counter = box(0, 0.55, -4.5, 5, 1.1, 0.8, 0x2a1a10, { roughness: 0.8 });
+box(0, 1.15, -4.5, 5.2, 0.1, 1.0, 0x1a1008, { roughness: 0.7 }); // countertop
+
+// Bell on counter
+const bell = new THREE.Mesh(
+  new THREE.SphereGeometry(0.12, 8, 6, 0, Math.PI*2, 0, Math.PI/2),
+  new THREE.MeshStandardMaterial({ color: 0xc0a040, metalness: 0.8, roughness: 0.3 })
+);
+bell.position.set(0, 1.25, -4.5);
+scene.add(bell);
+
+// Reception lamp
+const recLamp = new THREE.PointLight(0xffb060, 1.2, 10, 2);
+recLamp.position.set(0, 3.2, -4);
+scene.add(recLamp);
+
+// Journal on counter
+const journal = box(1.5, 1.22, -4.5, 0.5, 0.05, 0.35, 0xd4c8a0, { roughness: 0.95 });
+addInteractable(journal, 'Открыть журнал регистрации', () => {
+  showDocument('Журнал регистрации',
+`14 октября 1998
+
+— Смит, Томас. Номер 03. Оплачено на 2 ночи.
+— Грир, Анна. Номер 05. 1 ночь.
+— Дэвис, Р. Номер 09. 1 ночь. Замечание: гость нервничал.
+— [размыто] ………………. Номер 07.
+
+Последняя запись сделана не рукой администратора.
+Почерк похож на мой собственный.
+
+На полях карандашом: "Ты уже был здесь. Ты просто не помнишь."`, () => {
+    state.flags.readJournal = true;
+    addStress(10);
+  });
+}, 3);
+
+// Key rack
+box(3.8, 2.2, -7.8, 1.2, 1.0, 0.1, 0x1a1008);
+for (let i = 0; i < 5; i++) {
+  box(3.3 + i*0.25, 2.0 + (i%2)*0.3, -7.75, 0.05, 0.15, 0.02, 0xc0a040);
+}
+
+// Phone on counter
+const phone = box(-2.0, 1.22, -4.5, 0.4, 0.1, 0.3, 0x1a1a1a);
+const phoneRecv = box(-2.0, 1.35, -4.5, 0.35, 0.08, 0.1, 0x2a2a2a);
+addInteractable(phone, 'Поднять трубку', () => {
+  if (state.flags.phoneRang) {
+    answerPhoneCall();
+  } else {
+    showDocument('Телефон',
+`Трубка поднята. Гудки. Никто не отвечает.
+
+Далеко на линии, будто в глубине здания, кто-то дышит.
+
+Ты кладёшь трубку.`);
+  }
+}, 3);
+
+// Reception door (front, leads outside)
+// (already an opening in wall, we'll place a door object here)
+const frontDoor = box(0, 1.5, 0, 1.0, 3.0, 0.08, 0x2a1a10, { roughness: 0.85 });
+frontDoor.userData.doorState = 'closed';
+addInteractable(frontDoor, 'Войти в мотель', () => {
+  // handled by proximity to trigger next
+  audio.door();
+}, 3);
+
+// Vera (owner) - simple silhouette behind counter
+const veraBody = box(0, 0.9, -5.2, 0.4, 1.8, 0.3, 0x101010);
+const veraHead = new THREE.Mesh(
+  new THREE.SphereGeometry(0.15, 8, 8),
+  new THREE.MeshStandardMaterial({ color: 0x2a2018 })
+);
+veraHead.position.set(0, 2.1, -5.2);
+scene.add(veraHead);
+addInteractable(veraBody, 'Поговорить с Верой', () => {
+  startVeraDialogue();
+}, 4);
+
+// ---------- CORRIDOR (leads north from reception) ----------
+// The reception north wall has a gap for the corridor entrance
+// Corridor from z=-8 to z=-26, width 3, x from -1.5 to 1.5
+// Replace the middle of the north wall with a doorway
+// (we'll re-build north wall segments)
+// Actually let me just not put a full north wall - re-do:
+// We already have wall(0, 2, -8, 10, 4, 0.2) which is the north wall
+// I need a gap. Let me just add a doorway visual on top.
+
+// Rebuild: remove that wall by covering. Instead let's just add corridor geometry.
+// Corridor floor
+box(0, 0.02, -17, 3, 0.05, 18, 0x101014, { roughness: 1 });
+box(0, 3.9, -17, 3, 0.05, 18, 0x08080a, { roughness: 1 });
+
+// Corridor walls
+wall(-1.5, 2, -17, 0.2, 4, 18); // left
+wall(1.5, 2, -17, 0.2, 4, 18); // right
+
+// End wall
+wall(0, 2, -26, 3, 4, 0.2);
+
+// Corridor flickering lights
+const corridorLights = [];
+for (let i = 0; i < 3; i++) {
+  const lz = -10 - i*6;
+  const pl = new THREE.PointLight(0xffaa60, 0.8, 6, 2);
+  pl.position.set(0, 3.5, lz);
+  scene.add(pl);
+  corridorLights.push({ light: pl, base: 0.8, flicker: Math.random() });
+
+  // visible bulb
+  const bulb = box(0, 3.8, lz, 0.2, 0.15, 0.2, 0xffaa60, { emissive: 0xffaa60, emissiveIntensity: 1.5 });
+}
+
+// Doors in corridor
+// Room 07 door on right (east), at z=-12
+const door07Mesh = box(1.4, 1.5, -12, 0.06, 3.0, 1.0, 0x2a1a10, { roughness: 0.85 });
+addInteractable(door07Mesh, 'Открыть номер 07', () => {
+  tryOpenDoor07();
+}, 3);
+
+// Door 11 (empty, always locked) at z=-18
+const door11Mesh = box(1.4, 1.5, -18, 0.06, 3.0, 1.0, 0x1a1008, { roughness: 0.85 });
+addInteractable(door11Mesh, 'Номер 11 (заперто)', () => {
+  showDocument('Номер 11',
+`Дверь заперта. Сквозь щель тянет холодом.
+
+Ты слышишь, как внутри кто-то медленно, шаркающе, подходит к двери и останавливается.
+
+Тишина.
+
+Шагов обратно не слышно.`);
+  addStress(15);
+  audio.whisper();
+}, 3);
+
+// Basement door at end
+const basementDoorMesh = box(0, 1.5, -26, 1.0, 3.0, 0.08, 0x0a0505, { roughness: 0.9 });
+addInteractable(basementDoorMesh, 'Дверь в подвал', () => {
+  if (state.hasBasementKey) {
+    openBasement();
+  } else {
+    showDocument('Дверь в подвал',
+`Тяжёлая металлическая дверь. Заперта. Замок старый, но крепкий.
+
+На двери прикреплена табличка: "ТОЛЬКО ДЛЯ ПЕРСОНАЛА".
+
+Ключ где-то должен быть.`);
+  }
+}, 3);
+
+// ---------- ROOM 07 INTERIOR ----------
+// Room at x=4, z=-12, size 4x4
+// Walls (back of corridor wall at x=1.5 already exists - shared wall)
+wall(6, 2, -12, 0.2, 4, 4); // east wall
+wall(4, 2, -14, 4, 4, 0.2); // north wall
+wall(4, 2, -10, 4, 4, 0.2); // south wall
+box(4, 0.02, -12, 4, 0.05, 4, 0x141416); // floor
+box(4, 3.9, -12, 4, 0.05, 4, 0x08080a); // ceiling
+
+// Room 07 door (interior side of corridor door) - use same mesh
+// But we need collision on the corridor wall gap for x=1.5, z=-12
+
+// Bed
+box(5, 0.3, -12.5, 2, 0.5, 1, 0x2a1a10);
+box(5, 0.7, -12.5, 2, 0.2, 1, 0x3a2a20);
+// pillow
+box(5.6, 0.85, -12.5, 0.5, 0.15, 0.6, 0x3a3a40);
+
+// Nightstand
+box(3.4, 0.35, -12.5, 0.5, 0.7, 0.5, 0x1a1008);
+// Lamp on nightstand
+const nightLamp = new THREE.PointLight(0xffcc88, 0.6, 5, 2);
+nightLamp.position.set(3.4, 1.2, -12.5);
+scene.add(nightLamp);
+const nightBulb = new THREE.Mesh(
+  new THREE.SphereGeometry(0.08, 8, 8),
+  new THREE.MeshStandardMaterial({ color: 0xffcc88, emissive: 0xffcc88, emissiveIntensity: 2 })
+);
+nightBulb.position.set(3.4, 1.2, -12.5);
+scene.add(nightBulb);
+
+// Note on nightstand
+const noteMesh = box(3.4, 0.72, -12.5, 0.3, 0.02, 0.25, 0xe0d8b0);
+addInteractable(noteMesh, 'Прочитать записку', () => {
+  const isChanged = state.flags.readNote && state.flags.readJournal;
+  const text = isChanged ?
+`Я же говорил тебе не возвращаться.
+
+Ты не помнишь? Или не хочешь помнить?
+
+В подвале есть всё, что ты забыл.
+
+Ключ у той, кто улыбается.
+
+— Артём`
+  : `Здравствуй, Артём.
+
+Ты не должен был приезжать.
+
+Но раз уж ты здесь — не ходи в номер 11.
+Не отвечай на звонки.
+Не верь тому, что видишь.
+
+Прости меня.
+
+— ?`;
+  showDocument('Записка', text, () => {
+    state.flags.readNote = true;
+    addStress(8);
+    updateObjective('Найдите способ позвонить');
+    setTimeout(triggerNightCall, 3000);
+  });
+}, 3);
+
+// Photo on wall (3 people initially)
+const photoGroup = new THREE.Group();
+photoGroup.position.set(4, 2.2, -13.85);
+const photoFrame = new THREE.Mesh(
+  new THREE.BoxGeometry(0.8, 0.6, 0.02),
+  new THREE.MeshStandardMaterial({ color: 0x2a1a10 })
+);
+photoGroup.add(photoFrame);
+const photoInner = new THREE.Mesh(
+  new THREE.PlaneGeometry(0.7, 0.5),
+  new THREE.MeshStandardMaterial({ color: 0x3a3020, emissive: 0x2a2010, emissiveIntensity: 0.3 })
+);
+photoInner.position.z = 0.011;
+photoGroup.add(photoInner);
+// 3 small silhouettes
+const figureMat = new THREE.MeshBasicMaterial({ color: 0x1a1008 });
+const figures = [];
+for (let i = 0; i < 3; i++) {
+  const fig = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 0.2), figureMat);
+  fig.position.set(-0.2 + i*0.2, -0.05, 0.012);
+  photoGroup.add(fig);
+  figures.push(fig);
+}
+scene.add(photoGroup);
+worldObjects.photoFigures = figures;
+addInteractable(photoFrame, 'Рассмотреть фотографию', () => {
+  const count = state.photoPeople;
+  let text;
+  if (count === 3) {
+    text = 'Старое фото: мужчина в шляпе, женщина с длинными волосами и ребёнок между ними.\n\nНа обороте карандашом: "Грейхейвен, лето 1986".';
+  } else if (count === 2) {
+    text = 'Старое фото: мужчина в шляпе и ребёнок между ними.\n\nЖенщины нет. Но ты готов поклясться, что она была здесь минуту назад.\n\nНа обороте всё то же: "Грейхейвен, лето 1986".\n\nИли нет?';
+  } else {
+    text = 'Старое фото: мужчина в шляпе.\n\nРебёнка тоже нет. Ты помнишь его. Но его больше нет на фотографии.\n\nТы не уверен, что он вообще был.';
+  }
+  showDocument('Фотография', text, () => addStress(5));
+}, 3);
+
+// Window (rain visible)
+const windowMesh = box(6.05, 2, -12, 0.02, 1.2, 1.5, 0x0a1525, { emissive: 0x0a1525, emissiveIntensity: 0.5 });
+
+// ---------- BASEMENT STAIRS + ROOM ----------
+// We'll put stairs going down from z=-26.5
+// Simple: at z < -26, floor drops to y=-2
+// Create basement room at z=-32, y=-2
+// Floor
+box(0, -2, -32, 8, 0.1, 8, 0x0a0806, { roughness: 1 });
+box(0, 1.8, -32, 8, 0.1, 8, 0x050505, { roughness: 1 });
+// walls
+wall(-4, 0, -32, 0.2, 4, 8);
+wall(4, 0, -32, 0.2, 4, 8);
+wall(0, 0, -36, 8, 4, 0.2);
+wall(0, 0, -28, 8, 4, 0.2);
+// stairs visual
+for (let i = 0; i < 5; i++) {
+  box(0, -0.2 - i*0.4, -26.3 - i*0.8, 2.5, 0.15, 0.8, 0x1a1a1a);
+}
+// basement hanging bulb
+const baseLight = new THREE.PointLight(0xff8844, 0.7, 8, 2);
+baseLight.position.set(0, 1.2, -32);
+scene.add(baseLight);
+const baseBulb = box(0, 1.5, -32, 0.15, 0.2, 0.15, 0xff8844, { emissive: 0xff8844, emissiveIntensity: 1.5 });
+
+// Newspaper on floor (evidence)
+const newspaper = box(-1, -1.9, -33, 0.5, 0.02, 0.35, 0xd0c8a0);
+addInteractable(newspaper, 'Прочитать газету', () => {
+  showDocument('Вырезка из газеты, 1986 г.',
+`ГРЕЙХЕЙВЕНСКИЙ ВЕСТНИК
+
+ТРАГЕДИЯ В МОТЕЛЕ NIGHTSHADE
+
+В ночь на 14 августа 1986 года в мотеле на шоссе 9 произошёл пожар. Погибли трое: владелец мотеля Роберт Кейн, его жена Маргарет и их семилетний сын Дэниел.
+
+Единственная выжившая — Вероника Кейн, сестра Роберта, которая в ту ночь находилась в соседнем здании.
+
+Причина возгорания не установлена. Расследование продолжается.
+
+Примечание редакции: местные жители утверждают, что видели в окне мотеля ребёнка за день до пожара.`, () => {
+    state.flags.readNewspaper = true;
+    addStress(20);
+    updateObjective('Найдите Веру');
+  }, 4);
+});
+
+// Basement note (secret/hidden) - hints at twist
+const secretNote = box(3, -1.9, -35.5, 0.3, 0.02, 0.25, 0x300808);
+addInteractable(secretNote, 'Прочитать обрывок', () => {
+  showDocument('Обрывок, написанный кровью', 
+`Ты не Артём.
+
+Артём умер в 1986.
+
+Ты — тот ребёнок, которого не спасли.
+
+Или ты — тот, кто поджёг.
+
+Реши сам.`, () => {
+    state.flags.readBasementNote = true;
+    addStress(30);
+    audio.whisper();
+  });
+}, 4);
+
+// Wooden box (contains basement key originally? no, that's for later)
+// Put a spare key here for room 07 relock scenario
+const spareKey = box(2, -1.9, -30, 0.1, 0.05, 0.3, 0xc0a040);
+addInteractable(spareKey, 'Взять запасной ключ', () => {
+  addToInventory('Запасной ключ', 'Ключ с биркой "07"');
+  spareKey.visible = false;
+  spareKey.userData.taken = true;
+});
+
+// ---------- FOREST PATH (west, secret area with second note) ----------
+// Small path west at z=5, extending to x=-20
+box(-15, 0.02, 5, 20, 0.05, 2, 0x0a0a0d);
+// A log with a note
+const logMesh = box(-15, 0.3, 5, 2, 0.5, 0.6, 0x0a0806);
+const forestNote = box(-15, 0.55, 5, 0.2, 0.02, 0.2, 0xe0d8b0);
+addInteractable(forestNote, 'Прочитать записку', () => {
+  showDocument('Записка под бревном',
+`Если ты читаешь это — значит, ты уже понял, что что-то не так.
+
+Вера не сестра Роберта. Она его дочь.
+
+В ту ночь она была в мотеле. Она всё видела.
+
+Она убила своего отца.
+
+Мальчик Дэниел — не сын. Это ты.
+
+Ты не Артём. Ты Дэниел Кейн.
+
+Тебе было семь, когда горел мотель. Ты выжил.
+
+Она стёрла тебе память.
+
+Прости.`, () => {
+    state.flags.readForestNote = true;
+    addToInventory('Записка под бревном', 'Раскрывает правду о прошлом');
+    addStress(25);
+    updateObjective('Найдите Веру и потребуйте ответов');
+  });
+}, 4);
+
+// =================================================================
+// PLAYER MOVEMENT + COLLISION
+// =================================================================
+const keys = { forward: false, back: false, left: false, right: false };
+
+// Touch controls state
+const touch = {
+  joyActive: false, joyId: null, joyX: 0, joyY: 0, joyCenter: { x: 0, y: 0 },
+  lookActive: false, lookId: null, lookLast: { x: 0, y: 0 },
+  interactPressed: false
+};
+
+function checkCollision(newPos) {
+  const playerRadius = 0.3;
+  const playerHeight = 1.6;
+  for (const box of collisionBoxes) {
+    if (newPos.x + playerRadius > box.min.x && newPos.x - playerRadius < box.max.x &&
+        newPos.y - 0.1 < box.max.y && newPos.y + playerHeight > box.min.y &&
+        newPos.z + playerRadius > box.min.z && newPos.z - playerRadius < box.max.z) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// =================================================================
+// INTERACTION SYSTEM
+// =================================================================
+let currentInteractable = null;
+const raycaster = new THREE.Raycaster();
+const centerVec = new THREE.Vector2(0, 0);
+
+function updateInteraction() {
+  if (!hudActive) return;
+  raycaster.setFromCamera(centerVec, camera);
+  raycaster.far = 3.5;
+  const meshes = interactables
+    .filter(i => i.mesh.visible !== false)
+    .map(i => i.mesh);
+  const hits = raycaster.intersectObjects(meshes, false);
+  if (hits.length > 0) {
+    const hitMesh = hits[0].object;
+    const item = interactables.find(i => i.mesh === hitMesh && i.mesh.visible !== false);
+    if (item) {
+      const itemPos = new THREE.Vector3();
+      item.mesh.getWorldPosition(itemPos);
+      if (player.pos.distanceTo(itemPos) < item.dist) {
+        currentInteractable = item;
+        showPrompt(item.label);
+        return;
+      }
+    }
+  }
+  currentInteractable = null;
+  hidePrompt();
+}
+
+function showPrompt(text) {
+  const p = document.getElementById('prompt');
+  p.textContent = text;
+  p.classList.add('active');
+}
+function hidePrompt() {
+  document.getElementById('prompt').classList.remove('active');
+}
+
+function doInteract() {
+  if (currentInteractable) {
+    audio.tone(660, 0.08, 'sine', 0.06);
+    try { currentInteractable.action(); } catch(e) { console.error(e); }
+  }
+}
+
+// =================================================================
+// UI STATE
+// =================================================================
+let hudActive = false;
+let modalOpen = false;
+let paused = false;
+
+function showHud(active) {
+  hudActive = active;
+  document.getElementById('hud').classList.toggle('active', active);
+}
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+  modalOpen = true;
+  hidePrompt();
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  modalOpen = false;
+  checkAnyModalOpen();
+}
+function checkAnyModalOpen() {
+  const ids = ['dialogue', 'document', 'inventory', 'pause', 'settings', 'about', 'ending', 'title'];
+  modalOpen = ids.some(id => document.getElementById(id).classList.contains('active'));
+}
+
+// Objective
+function updateObjective(text) {
+  document.getElementById('objective').textContent = text;
+}
+
+// =================================================================
+// DOCUMENT VIEWER
+// =================================================================
+let docCloseCallback = null;
+function showDocument(title, body, onClose) {
+  document.getElementById('doc-title').textContent = title;
+  document.getElementById('doc-body').textContent = body;
+  docCloseCallback = onClose || null;
+  openModal('document');
+}
+
+document.getElementById('doc-close').addEventListener('click', () => {
+  closeModal('document');
+  if (docCloseCallback) {
+    const cb = docCloseCallback;
+    docCloseCallback = null;
+    cb();
+  }
+});
+
+// =================================================================
+// INVENTORY
+// =================================================================
+function addToInventory(name, desc) {
+  if (!state.inventory.some(i => i.name === name)) {
+    state.inventory.push({ name, desc });
+    audio.tone(880, 0.15, 'sine', 0.08);
+  }
+}
+
+function openInventory() {
+  const list = document.getElementById('inv-list');
+  if (state.inventory.length === 0) {
+    list.innerHTML = '<div style="color:#555;padding:20px;grid-column:1/-1;text-align:center">Пусто</div>';
+  } else {
+    list.innerHTML = state.inventory.map(i =>
+      `<div class="inv-item"><div class="name">${i.name}</div><div class="desc">${i.desc}</div></div>`
+    ).join('');
+  }
+  openModal('inventory');
+}
+document.getElementById('btn-inventory').addEventListener('click', () => {
+  if (hudActive) openInventory();
+});
+document.getElementById('inv-close').addEventListener('click', () => closeModal('inventory'));
+
+// =================================================================
+// DIALOGUE
+// =================================================================
+let dialogueOnEnd = null;
+
+function startDialogue(speaker, text, choices) {
+  document.getElementById('dlg-speaker').textContent = speaker;
+  document.getElementById('dlg-text').textContent = text;
+  const c = document.getElementById('dlg-choices');
+  c.innerHTML = '';
+  choices.forEach(ch => {
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.textContent = ch.text;
+    b.addEventListener('click', () => {
+      if (ch.action) ch.action();
+      if (ch.next) {
+        startDialogue(ch.next.speaker, ch.next.text, ch.next.choices);
+      } else {
+        closeModal('dialogue');
+        if (dialogueOnEnd) { dialogueOnEnd(); dialogueOnEnd = null; }
+      }
+    });
+    c.appendChild(b);
+  });
+  openModal('dialogue');
+}
+
+function startVeraDialogue() {
+  state.flags.metVera = true;
+  audio.tone(400, 0.1, 'sine', 0.05);
+
+  const hasNewspaper = state.flags.readNewspaper;
+  const hasForestNote = state.flags.readForestNote;
+
+  if (!state.hasKey07) {
+    startDialogue('Вера', 
+`О, добрый вечер. Не думала, что кто-то приедет в такую бурю.
+
+Дождь, говорят, будет идти до утра.
+
+Вам номер? У нас есть свободные.`,
+    [
+      { text: '«Я получил письмо. Кто его отправил?»', action: () => addStress(10), next: {
+        speaker: 'Вера',
+        text: `Письмо? Я не отправляла писем.
+
+Хотя… почерк мог быть мой. Иногда я пишу то, чего не помню.
+
+Усталость. Возраст. Не обращайте внимания.
+
+Вам ключ?`,
+        choices: [
+          { text: '«Дайте ключ от седьмого»', action: giveKey07, next: null },
+          { text: '«Кто жил в этом мотеле в 1986-м?»', action: () => addStress(15), next: {
+            speaker: 'Вера',
+            text: `В 1986-м здесь ничего не было. Только лес.
+
+Вы, верно, слышали разные истории. Люди любят рассказывать.
+
+Не слушайте их.`,
+            choices: [
+              { text: '«Хорошо. Дайте ключ»', action: giveKey07, next: null }
+            ]
+          }}
+        ]
+      }},
+      { text: '«Я приехал, потому что мне позвонили»', next: {
+        speaker: 'Вера',
+        text: `Вам звонили? В такое время?
+
+Телефон в мотеле один. В ресепшене. И он не работал весь вечер.
+
+Впрочем, если вы уверены — вот, держите ключ.`,
+        choices: [
+          { text: 'Взять ключ', action: giveKey07, next: null }
+        ]
+      }},
+      { text: 'Молча взять ключ и уйти', action: giveKey07, next: null }
+    ]);
+  } else if (hasForestNote || hasNewspaper) {
+    // Confrontation dialogue
+    let veraText = `Вы всё не успокоитесь.
+
+Зачем вы копаете? Прошлое — это прошлое. Оно никому не помогает.`;
+    let extraChoice = null;
+    if (hasNewspaper) {
+      veraText = `Это… где вы это взяли?
+
+Вы не должны были спускаться в подвал.
+
+Я всё делала ради тебя. Я стёрла это. Я убила за это. Я горела за это.
+
+Ты не должен помнить.`;
+      extraChoice = { text: '«Я — Дэниел. Ты — моя мать»', action: confrontVera, next: null };
+    } else if (hasForestNote) {
+      veraText = `Кто тебе это дал?
+
+Это ложь. Это всё ложь.
+
+Ты не Дэниел. Дэниел умер.
+
+Я не убивала его. Я не убивала его. Я не убивала его.`;
+      extraChoice = { text: '«Ты убила его. Ты убила моего отца»', action: confrontVera, next: null };
+    }
+
+    const choices = [];
+    if (extraChoice) choices.push(extraChoice);
+    choices.push({ text: '«Я уезжаю. Прощайте»', action: () => triggerEnding('ambiguous'), next: null });
+    choices.push({ text: '«Я вызову полицию»', action: () => triggerEnding('truth'), next: null });
+
+    startDialogue('Вера', veraText, choices);
+  } else {
+    startDialogue('Вера',
+`Что-то ещё?
+
+Номер 07 — ваш. Вода горячая. Завтрак с семи.
+
+Если услышите шум — это ветер. Только ветер.`,
+    [
+      { text: '«Хорошо. Спасибо»', next: null },
+      { text: '«А кто такой Артём?»', action: () => addStress(20), next: {
+        speaker: 'Вера',
+        text: `…Не знаю такого.
+
+Откуда вы взяли это имя?
+
+Впрочем — неважно.
+
+Идите спать. Поздно.`,
+        choices: [{ text: 'Уйти', next: null }]
+      }}
+    ]);
+  }
+}
+
+function giveKey07() {
+  state.hasKey07 = true;
+  addToInventory('Ключ от номера 07', 'Бирка с номером 07');
+  updateObjective('Найдите номер 07 в коридоре');
+  audio.tone(1200, 0.1, 'sine', 0.08);
+}
+
+function confrontVera() {
+  addStress(20);
+  if (state.hasBasementKey) {
+    // she gives you the basement key
+    triggerEnding('secret');
+  } else {
+    triggerEnding('truth');
+  }
+}
+
+// =================================================================
+// EVENT SYSTEM
+// =================================================================
+function addStress(amount) {
+  state.stress += amount;
+  const vignette = document.getElementById('vignette');
+  if (state.stress > 30) {
+    vignette.classList.add('active');
+  }
+  if (state.stress > 60) {
+    setTimeout(() => {
+      audio.whisper();
+    }, 500);
+  }
+}
+
+function triggerNightCall() {
+  if (state.flags.phoneRang) return;
+  state.flags.phoneRang = true;
+  audio.phone();
+  updateObjective('Ответьте на телефон в ресепшене');
+  // Photo change (reflection effect)
+  state.photoPeople = 2;
+  applyReflection();
+  // Door relock after phone rings
+  state.flags.doorRelocked = true;
+}
+
+function applyReflection() {
+  // Update photo figures
+  if (worldObjects.photoFigures) {
+    worldObjects.photoFigures.forEach((fig, i) => {
+      if (i >= state.photoPeople) fig.visible = false;
+      else fig.visible = true;
+    });
+  }
+  // Relock door 07 (remove key effect - actually we set flag)
+  if (state.flags.doorRelocked && !state.hasBasementKey) {
+    state.hasKey07 = false;
+  }
+}
+
+function tryOpenDoor07() {
+  if (!state.hasKey07 && !state.hasBasementKey) {
+    showDocument('Номер 07',
+`Дверь заперта. Ключ, который дала Вера, куда-то пропал из твоего кармана.
+
+Ты готов поклясться, что минуту назад он был там.
+
+На ручке записка: "Вернись к Вере."`);
+    addStress(10);
+    return;
+  }
+  if (state.hasBasementKey) {
+    openRoom07();
+    return;
+  }
+  openRoom07();
+}
+
+function openRoom07() {
+  state.hasKey07 = false;
+  audio.door();
+  // Fade transition
+  const fade = document.getElementById('fade');
+  fade.classList.add('active');
+  setTimeout(() => {
+    // Teleport into room
+    player.pos.set(4, 1.6, -11.5);
+    player.yaw = Math.PI;
+    updateObjective('Исследуйте номер 07');
+    setTimeout(() => fade.classList.remove('active'), 300);
+  }, 500);
+}
+
+function openBasement() {
+  audio.door();
+  const fade = document.getElementById('fade');
+  fade.classList.add('active');
+  setTimeout(() => {
+    player.pos.set(0, -0.4, -29);
+    player.yaw = Math.PI;
+    updateObjective('Исследуйте подвал');
+    setTimeout(() => fade.classList.remove('active'), 300);
+  }, 500);
+}
+
+// Phone answering
+function answerPhoneCall() {
+  state.flags.answeredPhone = true;
+  audio.tone(1200, 0.2, 'sine', 0.1);
+  
+  startDialogue('Голос в трубке',
+`[шум, шипение]
+
+…ты вернулся.
+
+Я знал, что ты вернёшься.
+
+Я жду тебя в номере 11. Приходи. Не бойся.
+
+[пауза]
+
+Хотя…
+
+ты ведь уже знаешь, что там никого нет.
+
+[смех]`,
+  [
+    { text: '«Кто это?»', next: {
+      speaker: 'Голос в трубке',
+      text: `Ты сам знаешь.
+
+Ты всегда знал.
+
+Просто забыл. Как всегда забываешь.
+
+Иди в подвал. Ключ у Веры. Она скажет, что нет.
+
+Она всегда говорит, что нет.`,
+      choices: [{ text: 'Положить трубку', action: () => {
+        addStress(25);
+        updateObjective('Найдите ключ от подвала. Возможно, Вера знает больше, чем говорит.');
+        state.hasBasementKey = true; // unlock via vera alternative
+        // Actually: we grant basement key access via "she'll say no" - so player can now access basement
+      }, next: null }]
+    }},
+    { text: 'Молча слушать', next: {
+      speaker: 'Голос в трубке',
+      text: `[долгая пауза]
+
+Ты меня слышишь?
+
+Хорошо.
+
+Иди в подвал.`,
+      choices: [{ text: 'Положить трубку', action: () => {
+        addStress(25);
+        updateObjective('Найдите ключ от подвала');
+        state.hasBasementKey = true;
+      }, next: null }]
+    }}
+  ]);
+}
+
+// =================================================================
+// ENDINGS
+// =================================================================
+function triggerEnding(type) {
+  state.flags.ending = type;
+  audio.tone(40, 3, 'sawtooth', 0.15);
+  const fade = document.getElementById('fade');
+  fade.classList.add('active');
+  setTimeout(() => {
+    closeModal('dialogue');
+    document.getElementById('ending').className = 'modal active ' + type;
+    const title = document.getElementById('end-title');
+    const text = document.getElementById('end-text');
+    if (type === 'tragic') {
+      title.textContent = 'ТИХАЯ НОЧЬ';
+      text.textContent = 'Ты уезжаешь в дождь. Ты ничего не узнал. Ничего не понял. Утром ты не вспомнишь, что вообще был здесь. Через год ты приедешь снова. Ты всегда приезжаешь снова.';
+    } else if (type === 'truth') {
+      title.textContent = 'ПРАВДА';
+      text.textContent = 'Ты вызываешь полицию. Веру арестовывают. В газетах пишут о раскрытии дела 1986 года. Ты смотришь в окно. Ты больше не помнишь её лица. Ты не помнишь своего собственного лица. Но ты свободен.';
+    } else if (type === 'ambiguous') {
+      title.textContent = 'МОЛЧАНИЕ';
+      text.textContent = 'Ты уезжаешь. Ты знаешь, что что-то не так, но не знаешь что. Ты никогда не узнаешь. Всё, что было здесь, останется здесь. Ты тоже.';
+    } else if (type === 'secret') {
+      title.textContent = 'ОТРАЖЕНИЕ';
+      text.textContent = 'Ты видишь её лицо. Это твоё лицо. Ты видишь руки — это твои руки. Ты не Дэниел. Ты не Артём. Ты — та ночь, которая так и не закончилась. Мотель будет стоять вечно. Ты будешь стоять вечно.';
+    }
+    hudActive = false;
+    document.getElementById('hud').classList.remove('active');
+    saveGame();
+    state.flags.ending = type;
+  }, 900);
+}
+
+document.getElementById('end-restart').addEventListener('click', () => {
+  localStorage.removeItem('nightshade_save');
+  location.reload();
+});
+
+// =================================================================
+// MAIN MENU HANDLERS
+// =================================================================
+document.getElementById('btn-new').addEventListener('click', () => {
+  audio.init();
+  audio.startRain();
+  localStorage.removeItem('nightshade_save');
+  resetState();
+  startGame();
+});
+
+document.getElementById('btn-continue').addEventListener('click', () => {
+  if (loadGame()) {
+    audio.init();
+    audio.startRain();
+    startGame();
+  }
+});
+
+document.getElementById('btn-settings').addEventListener('click', () => openModal('settings'));
+document.getElementById('btn-about').addEventListener('click', () => openModal('about'));
+document.getElementById('about-close').addEventListener('click', () => closeModal('about'));
+document.getElementById('settings-close').addEventListener('click', () => closeModal('settings'));
+document.getElementById('pause-resume').addEventListener('click', () => {
+  closeModal('pause'); paused = false;
+});
+document.getElementById('pause-save').addEventListener('click', () => {
+  saveGame();
+  document.getElementById('pause-save').textContent = 'СОХРАНЕНО';
+  setTimeout(() => document.getElementById('pause-save').textContent = 'СОХРАНИТЬ', 1500);
+});
+document.getElementById('pause-settings').addEventListener('click', () => {
+  closeModal('pause'); openModal('settings');
+});
+document.getElementById('pause-menu').addEventListener('click', () => {
+  saveGame();
+  location.reload();
+});
+document.getElementById('btn-pause').addEventListener('click', () => {
+  if (hudActive) { paused = true; openModal('pause'); }
+});
+
+// Settings
+document.getElementById('vol-slider').addEventListener('input', (e) => {
+  const v = e.target.value / 100;
+  document.getElementById('vol-val').textContent = e.target.value;
+  audio.setVolume(v);
+});
+document.getElementById('sens-slider').addEventListener('input', (e) => {
+  document.getElementById('sens-val').textContent = e.target.value;
+  touch.sensitivity = e.target.value / 100;
+});
+document.getElementById('qual-slider').addEventListener('input', (e) => {
+  const v = parseInt(e.target.value);
+  const labels = ['Низкое', 'Среднее', 'Высокое'];
+  document.getElementById('qual-val').textContent = labels[v];
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, [1, 1.5, 2][v]));
+});
+touch.sensitivity = 0.5;
+
+// =================================================================
+// RESET / START
+// =================================================================
+function resetState() {
+  state.chapter = 1;
+  state.hasKey07 = false;
+  state.hasBasementKey = false;
+  state.flashlightOn = true;
+  state.stress = 0;
+  state.inventory = [];
+  state.flags = { readNote: false, phoneRang: false, answeredPhone: false, readJournal: false,
+    readNewspaper: false, readBasementNote: false, doorRelocked: false, metVera: false, ending: null };
+  state.photoPeople = 3;
+  state.position = { x: 5, y: 0, z: 15 };
+  state.yaw = 0;
+  player.pos.set(5, 1.6, 15);
+  player.yaw = 0;
+  player.pitch = 0;
+}
+
+function startGame() {
+  closeModal('title');
+  closeModal('ending');
+  document.getElementById('title').classList.remove('active');
+  document.getElementById('ending').className = 'modal';
+  showHud(true);
+  updateObjective('Подойдите к стойке регистрации');
+  document.getElementById('vignette').classList.remove('active');
+  document.getElementById('fade').classList.remove('active');
+  // reset photo figures
+  if (worldObjects.photoFigures) {
+    worldObjects.photoFigures.forEach(f => f.visible = true);
+  }
+  paused = false;
+}
+
+// =================================================================
+// TOUCH CONTROLS
+// =================================================================
+const joystick = document.getElementById('joystick');
+const joyKnob = document.getElementById('joy-knob');
+const lookzone = document.getElementById('lookzone');
+
+function getJoyCenter() {
+  const r = joystick.getBoundingClientRect();
+  return { x: r.left + r.width/2, y: r.top + r.height/2, radius: r.width/2 };
+}
+
+joystick.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  touch.joyId = t.identifier;
+  touch.joyActive = true;
+  const c = getJoyCenter();
+  touch.joyCenter = c;
+  updateJoy(t.clientX, t.clientY);
+}, { passive: false });
+
+joystick.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  for (const t of e.changedTouches) {
+    if (t.identifier === touch.joyId) {
+      updateJoy(t.clientX, t.clientY);
+    }
+  }
+}, { passive: false });
+
+function endJoy(e) {
+  for (const t of e.changedTouches) {
+    if (t.identifier === touch.joyId) {
+      touch.joyActive = false;
+      touch.joyId = null;
+      touch.joyX = 0; touch.joyY = 0;
+      joyKnob.style.transform = '';
+    }
+  }
+}
+joystick.addEventListener('touchend', endJoy, { passive: false });
+joystick.addEventListener('touchcancel', endJoy, { passive: false });
+
+function updateJoy(cx, cy) {
+  const c = touch.joyCenter;
+  const dx = cx - c.x;
+  const dy = cy - c.y;
+  const dist = Math.hypot(dx, dy);
+  const maxDist = c.radius - 20;
+  const clamped = Math.min(dist, maxDist);
+  const angle = Math.atan2(dy, dx);
+  const kx = Math.cos(angle) * clamped;
+  const ky = Math.sin(angle) * clamped;
+  joyKnob.style.transform = `translate(${kx}px, ${ky}px)`;
+  touch.joyX = kx / maxDist;
+  touch.joyY = ky / maxDist;
+}
+
+lookzone.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  touch.lookId = t.identifier;
+  touch.lookActive = true;
+  touch.lookLast.x = t.clientX;
+  touch.lookLast.y = t.clientY;
+}, { passive: false });
+
+lookzone.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  for (const t of e.changedTouches) {
+    if (t.identifier === touch.lookId) {
+      const dx = t.clientX - touch.lookLast.x;
+      const dy = t.clientY - touch.lookLast.y;
+      touch.lookLast.x = t.clientX;
+      touch.lookLast.y = t.clientY;
+      const sens = 0.004 * (touch.sensitivity * 2);
+      player.yaw -= dx * sens;
+      player.pitch -= dy * sens;
+      player.pitch = Math.max(-1.2, Math.min(1.2, player.pitch));
+    }
+  }
+}, { passive: false });
+
+function endLook(e) {
+  for (const t of e.changedTouches) {
+    if (t.identifier === touch.lookId) {
+      touch.lookActive = false;
+      touch.lookId = null;
+    }
+  }
+}
+lookzone.addEventListener('touchend', endLook, { passive: false });
+lookzone.addEventListener('touchcancel', endLook, { passive: false });
+
+// Action buttons
+document.getElementById('btn-interact').addEventListener('click', doInteract);
+document.getElementById('btn-flashlight').addEventListener('click', () => {
+  player.flashlight = !player.flashlight;
+  audio.tone(player.flashlight ? 800 : 500, 0.08, 'sine', 0.06);
+});
+document.getElementById('btn-crouch').addEventListener('click', () => {
+  player.crouch = !player.crouch;
+  audio.tone(300, 0.08, 'triangle', 0.05);
+});
+
+// Prevent default context menu on long press
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// =================================================================
+// RESIZE
+// =================================================================
+function onResize() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+window.addEventListener('resize', onResize);
+window.addEventListener('orientationchange', () => setTimeout(onResize, 100));
+
+// =================================================================
+// GAME LOOP
+// =================================================================
+let lastTime = performance.now();
+let footstepTimer = 0;
+let flickerTimer = 0;
+let shakeAmount = 0;
+
+function gameLoop(now) {
+  requestAnimationFrame(gameLoop);
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+
+  if (!hudActive || modalOpen || paused) {
+    // Still render, but don't update
+    renderer.render(scene, camera);
+    return;
+  }
+
+  // Camera rotation
+  camera.position.copy(player.pos);
+  camera.rotation.set(0, 0, 0);
+  camera.rotateY(player.yaw);
+  camera.rotateX(player.pitch);
+
+  // Movement
+  const speed = player.crouch ? 1.4 : player.speed;
+  const forward = new THREE.Vector3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
+  const right = new THREE.Vector3(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
+  
+  const moveVec = new THREE.Vector3();
+  // Keyboard
+  if (keys.forward) moveVec.add(forward);
+  if (keys.back) moveVec.sub(forward);
+  if (keys.left) moveVec.sub(right);
+  if (keys.right) moveVec.add(right);
+  // Touch joystick (invert Y: forward is up)
+  moveVec.add(forward.clone().multiplyScalar(-touch.joyY));
+  moveVec.add(right.clone().multiplyScalar(touch.joyX));
+  
+  if (moveVec.length() > 0.01) {
+    moveVec.normalize();
+    const newPos = player.pos.clone();
+    const dx = moveVec.x * speed * dt;
+    const dz = moveVec.z * speed * dt;
+    // Check X
+    newPos.x += dx;
+    if (checkCollision(newPos)) newPos.x -= dx;
+    // Check Z
+    newPos.z += dz;
+    if (checkCollision(newPos)) newPos.z -= dz;
+    player.pos.copy(newPos);
+
+    // Footsteps
+    footstepTimer -= dt;
+    if (footstepTimer <= 0) {
+      audio.footstep();
+      footstepTimer = player.crouch ? 0.8 : 0.42;
+    }
+
+    // Head bob
+    shakeAmount = Math.sin(now * 0.01) * 0.02;
+    camera.position.y = player.pos.y + (player.crouch ? 0 : shakeAmount);
+  } else {
+    camera.position.y = player.pos.y + (player.crouch ? -0.6 : 0);
+  }
+
+  // Flashlight
+  flashlight.visible = player.flashlight;
+
+  // Flicker corridor lights
+  flickerTimer -= dt;
+  if (flickerTimer <= 0) {
+    flickerTimer = 0.1 + Math.random() * 0.3;
+    corridorLights.forEach(cl => {
+      cl.light.intensity = cl.base * (Math.random() < 0.1 ? 0.1 : 0.8 + Math.random() * 0.2);
+    });
+  }
+
+  // Interaction check (only every few frames for perf)
+  if (Math.floor(now / 100) !== Math.floor((now - dt*1000) / 100)) {
+    updateInteraction();
+  }
+
+  // Auto save every 20 sec
+  if (Math.floor(now / 20000) !== Math.floor((now - dt*1000) / 20000)) {
+    saveGame();
+  }
+
+  // Check for ending trigger - leaving via car
+  const distanceToCar = player.pos.distanceTo(new THREE.Vector3(5, 1.6, 15));
+  if (distanceToCar < 2.5 && !state.flags.ending) {
+    if (state.flags.readNewspaper || state.flags.readForestNote) {
+      // Has evidence, let them go back
+    } else if (state.flags.phoneRang && !state.flags.answeredPhone) {
+      // Can't leave without answering
+    } else if (state.flags.phoneRang && state.flags.answeredPhone) {
+      // Can leave but ending is tragic without confronting Vera
+      triggerEnding('tragic');
+    }
+  }
+
+  // Save position for reload
+  state.position = { x: player.pos.x, y: player.pos.y, z: player.pos.z };
+  state.yaw = player.yaw;
+
+  renderer.render(scene, camera);
+}
+
+// =================================================================
+// KEYBOARD (desktop testing)
+// =================================================================
+window.addEventListener('keydown', (e) => {
+  const code = e.key.toLowerCase();
+  if (code === 'w') keys.forward = true;
+  if (code === 's') keys.back = true;
+  if (code === 'a') keys.left = true;
+  if (code === 'd') keys.right = true;
+  if (code === 'e') doInteract();
+  if (code === 'f') {
+    player.flashlight = !player.flashlight;
+  }
+  if (code === 'c') player.crouch = !player.crouch;
+  if (code === 'escape' && hudActive) { paused = true; openModal('pause'); }
+});
+window.addEventListener('keyup', (e) => {
+  const code = e.key.toLowerCase();
+  if (code === 'w') keys.forward = false;
+  if (code === 's') keys.back = false;
+  if (code === 'a') keys.left = false;
+  if (code === 'd') keys.right = false;
+});
+
+// Mouse look for desktop
+canvas.addEventListener('click', () => {
+  if (hudActive && !modalOpen) canvas.requestPointerLock();
+});
+document.addEventListener('mousemove', (e) => {
+  if (document.pointerLockElement === canvas) {
+    player.yaw -= e.movementX * 0.002;
+    player.pitch -= e.movementY * 0.002;
+    player.pitch = Math.max(-1.2, Math.min(1.2, player.pitch));
+  }
+});
+
+// =================================================================
+// INIT
+// =================================================================
+// Set initial player position
+camera.position.copy(player.pos);
+camera.rotation.set(0, player.yaw, 0);
+
+// Enable continue if save exists
+if (hasSave()) {
+  document.getElementById('btn-continue').disabled = false;
+}
+
+// Start render loop
+requestAnimationFrame(gameLoop);
+
+// Resume audio context on first touch
+document.addEventListener('touchstart', () => {
+  if (audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume();
+}, { once: true });
+document.addEventListener('click', () => {
+  if (audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume();
+}, { once: true });
+
+console.log('NIGHTSHADE MOTEL loaded. Welcome.');
+</script>
+</body>
+</html>
