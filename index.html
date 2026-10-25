@@ -16,75 +16,72 @@
         #game-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
 
         /* Effects */
-        #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; box-shadow: inset 0 0 200px rgba(0,0,0,0.95); }
-        #sanity-effect { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; background: radial-gradient(circle, transparent 40%, rgba(80,0,0,0.6) 100%); opacity: 0; transition: opacity 2s; }
-        #film-grain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; opacity: 0.12; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; box-shadow: inset 0 0 250px rgba(0,0,0,0.98); }
+        #sanity-effect { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; background: radial-gradient(circle, transparent 30%, rgba(120,0,0,0.5) 100%); opacity: 0; transition: opacity 1s; }
+        #film-grain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; opacity: 0.15; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        #blood-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; background: radial-gradient(circle, transparent 20%, rgba(150,0,0,0.8) 100%); opacity: 0; transition: opacity 0.5s; }
 
         /* HUD Layer */
         #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: none; }
         #hud.active { display: block; }
 
         /* Crosshair */
-        #crosshair { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; transform: translate(-50%, -50%); transition: all 0.2s; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
-        #crosshair.interactable { width: 12px; height: 12px; background: rgba(200, 40, 40, 0.8); box-shadow: 0 0 15px rgba(200, 40, 40, 0.8); }
+        #crosshair { position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 50%; transform: translate(-50%, -50%); transition: all 0.2s; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
+        #crosshair.interactable { width: 14px; height: 14px; background: rgba(255, 30, 30, 0.9); box-shadow: 0 0 20px rgba(255, 30, 30, 0.9); }
 
         /* Mobile Controls */
-        #joy-zone { position: absolute; bottom: 40px; left: 40px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); pointer-events: auto; backdrop-filter: blur(5px); }
+        #joy-zone { position: absolute; bottom: 40px; left: 40px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.02); border: 2px solid rgba(255,255,255,0.08); pointer-events: auto; backdrop-filter: blur(5px); }
         #joy-knob { position: absolute; width: 56px; height: 56px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; top: 37px; left: 37px; transition: transform 0.05s; box-shadow: 0 0 15px rgba(0,0,0,0.6); }
         
         #look-zone { position: absolute; top: 0; right: 0; width: 60%; height: 100%; pointer-events: auto; }
 
         /* Action Buttons Layout */
         #btn-group { position: absolute; bottom: 40px; right: 40px; width: 180px; height: 180px; pointer-events: none; }
-        
-        .btn { pointer-events: auto; position: absolute; display: flex; align-items: center; justify-content: center; background: rgba(15,15,20,0.6); border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px); transition: all 0.1s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .btn:active { transform: scale(0.9); background: rgba(50,50,60,0.8); }
+        .btn { pointer-events: auto; position: absolute; display: flex; align-items: center; justify-content: center; background: rgba(10,10,15,0.7); border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px); transition: all 0.1s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .btn:active { transform: scale(0.9); background: rgba(60,60,70,0.9); }
         .btn svg { width: 32px; height: 32px; fill: #a0a0a0; transition: all 0.2s; }
         
-        /* Action Button (Big, Right) */
-        #btn-interact { width: 80px; height: 80px; border-radius: 50%; bottom: 0; right: 0; border-color: rgba(150, 30, 30, 0.4); background: rgba(30, 10, 10, 0.7); }
-        #btn-interact svg { width: 40px; height: 40px; fill: #ff4a4a; }
-        #btn-interact.glow { box-shadow: 0 0 25px rgba(255, 50, 50, 0.6); border-color: #ff4a4a; }
-
-        /* Secondary Buttons */
-        #btn-flashlight { width: 60px; height: 60px; border-radius: 50%; bottom: 90px; right: 10px; }
-        #btn-flashlight.active svg { fill: #fff; filter: drop-shadow(0 0 8px #fff); }
+        #btn-interact { width: 85px; height: 85px; border-radius: 50%; bottom: 0; right: 0; border-color: rgba(200, 30, 30, 0.5); background: rgba(40, 10, 10, 0.8); }
+        #btn-interact svg { width: 45px; height: 45px; fill: #ff4a4a; }
+        #btn-interact.glow { box-shadow: 0 0 30px rgba(255, 50, 50, 0.8); border-color: #ff4a4a; }
         
+        #btn-flashlight { width: 60px; height: 60px; border-radius: 50%; bottom: 90px; right: 10px; }
+        #btn-flashlight.active svg { fill: #fff; filter: drop-shadow(0 0 10px #fff); }
         #btn-inventory { width: 60px; height: 60px; border-radius: 50%; bottom: 10px; right: 90px; }
 
         /* UI Modals */
-        .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 100; display: none; align-items: center; justify-content: center; pointer-events: auto; padding: 20px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 100; display: none; align-items: center; justify-content: center; pointer-events: auto; padding: 20px; padding-bottom: env(safe-area-inset-bottom, 20px); }
         .modal.active { display: flex; }
         
         /* Document Modal */
-        #modal-doc { background: rgba(0,0,0,0.92); }
-        .paper-container { position: relative; width: 100%; max-width: 700px; max-height: 85vh; }
-        .paper { background: #e8e2cd; color: #111; padding: 40px; width: 100%; height: 100%; overflow-y: auto; font-family: 'Special Elite', monospace; font-size: 18px; line-height: 1.6; box-shadow: inset 0 0 60px rgba(0,0,0,0.2), 0 20px 50px rgba(0,0,0,0.9); border-radius: 2px; }
-        .paper::before { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.4"/%3E%3C/svg%3E'); pointer-events: none; mix-blend-mode: multiply; }
+        .paper-container { position: relative; width: 100%; max-width: 700px; max-height: 80vh; display: flex; flex-direction: column; }
+        .paper { background: #dcd5c0; color: #111; padding: 30px; width: 100%; height: 100%; overflow-y: auto; font-family: 'Special Elite', monospace; font-size: 18px; line-height: 1.6; box-shadow: inset 0 0 60px rgba(0,0,0,0.2), 0 20px 50px rgba(0,0,0,0.9); border-radius: 2px; }
         .paper h2 { font-size: 24px; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; }
         
-        /* Close Button (X) for Documents */
-        .btn-close-ui { position: absolute; top: -15px; right: -15px; width: 44px; height: 44px; border-radius: 50%; background: rgba(40,40,40,0.9); border: 1px solid #555; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
-        .btn-close-ui:active { background: #7a1f1f; border-color: #ff3333; }
+        /* FIXED CLOSE BUTTON */
+        .btn-close-ui { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: rgba(200,30,30,0.8); border: 2px solid #ff6666; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.8); z-index: 999; backdrop-filter: blur(5px); }
+        .btn-close-ui:active { background: #ff0000; transform: scale(0.9); }
 
         /* Dialogue Style */
-        .dialogue-box { background: rgba(5,5,10,0.95); border: 1px solid #333; border-top: 4px solid #7a1f1f; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); border-radius: 8px; }
-        .speaker-name { color: #9b2929; font-size: 20px; font-weight: 800; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
-        .dialogue-text { font-size: 18px; line-height: 1.6; color: #bbb; margin-bottom: 30px; }
+        .dialogue-box { background: rgba(10,10,15,0.95); border: 1px solid #333; border-left: 5px solid #8a1f1f; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); border-radius: 4px; }
+        .speaker-name { color: #c03030; font-size: 22px; font-weight: 800; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; font-family: 'Special Elite', monospace;}
+        .dialogue-text { font-size: 18px; line-height: 1.6; color: #ccc; margin-bottom: 30px; }
         .choices { display: flex; flex-direction: column; gap: 12px; }
-        .choice-btn { background: transparent; border: 1px solid #444; color: #999; padding: 15px 20px; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; border-radius: 4px; }
-        .choice-btn:active { background: rgba(122,31,31,0.3); border-color: #9b2929; color: #fff; }
+        .choice-btn { background: rgba(255,255,255,0.05); border: 1px solid #444; color: #aaa; padding: 15px 20px; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; border-radius: 4px; }
+        .choice-btn:active { background: rgba(138,31,31,0.3); border-color: #c03030; color: #fff; }
 
         /* Start Screen */
-        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #start-title { font-family: 'Special Elite', monospace; font-size: 64px; letter-spacing: 4px; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.2); margin-bottom: 10px; }
+        #start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #start-title { font-family: 'Special Elite', monospace; font-size: 64px; letter-spacing: 4px; color: #fff; text-shadow: 0 0 40px rgba(200,30,30,0.5); margin-bottom: 10px; }
         #start-sub { font-size: 14px; color: #9b2929; letter-spacing: 8px; margin-bottom: 50px; text-transform: uppercase; font-weight: 600; }
-        .start-btn { background: transparent; border: 1px solid #444; color: #aaa; padding: 15px 40px; font-size: 18px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .start-btn:active { background: #fff; color: #000; border-color: #fff; }
+        .start-btn { background: transparent; border: 1px solid #666; color: #ccc; padding: 15px 40px; font-size: 18px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .start-btn:active { background: #8a1f1f; color: #fff; border-color: #8a1f1f; }
 
-        /* Portrait Warning */
-        #portrait-warning { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        @media (orientation: portrait) { #portrait-warning { display: flex; } }
+        /* Blood Splatter Canvas on screen */
+        #blood-overlay { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:90; opacity:0; transition:opacity 1s; background: radial-gradient(circle at center, rgba(150,0,0,0) 30%, rgba(100,0,0,0.8) 100%); }
+
+        @media (orientation: portrait) { #portrait-warning { display: flex !important; } }
+        #portrait-warning { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
     <script type="importmap">
     {
@@ -99,20 +96,24 @@
 
 <div id="portrait-warning">
     <h2 style="color:#fff; margin-bottom:10px;">Поверните телефон</h2>
-    <p style="color:#666; font-size:14px;">Игра оптимизирована для горизонтального режима</p>
+    <p style="color:#666; font-size:14px;">Для игры нужен горизонтальный режим</p>
 </div>
 
 <div id="start-screen">
     <div id="start-title">NIGHTSHADE</div>
     <div id="start-sub">MOTEL · GREYHAVEN · 1998</div>
-    <button class="start-btn" id="btn-start">ВОЙТИ В НОМЕР 07</button>
+    <button class="start-btn" id="btn-start">ПРИНЯТЬ СМЕНУ</button>
+    <div style="margin-top:30px; font-size:12px; color:#555; max-width:300px; text-align:center;">
+        ВНИМАНИЕ: Игра содержит сцены насилия (18+), кровь и психологическое давление. Наденьте наушники.
+    </div>
 </div>
 
 <canvas id="game-canvas"></canvas>
 
 <div id="vignette"></div>
-<div id="sanity-effect"></div>
 <div id="film-grain"></div>
+<div id="sanity-effect"></div>
+<div id="blood-overlay"></div>
 
 <div id="hud">
     <div id="crosshair"></div>
@@ -121,17 +122,12 @@
     <div id="look-zone"></div>
     
     <div id="btn-group">
-        <!-- Иконка глаза (Действие) -->
         <button class="btn" id="btn-interact">
             <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
         </button>
-        
-        <!-- Иконка фонарика -->
         <button class="btn active" id="btn-flashlight">
             <svg viewBox="0 0 24 24"><path d="M18 2H6v6l2 3v11h8V11l2-3V2zm-2 6.4V4h-8v4.4l-2 3V20h12v-8.6l-2-3zM9 18h6v2H9z"/></svg>
         </button>
-        
-        <!-- Иконка рюкзака -->
         <button class="btn" id="btn-inventory">
             <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H7v4H4v12h16V8zm-9-2h2v2h-2V6zm7 12H6v-4h12v4zm0-6H6v-4h12v4z"/></svg>
         </button>
@@ -140,8 +136,8 @@
 
 <!-- Document Modal -->
 <div class="modal" id="modal-doc">
+    <div class="btn-close-ui" id="btn-close-doc">×</div>
     <div class="paper-container">
-        <div class="btn-close-ui" id="btn-close-doc">×</div>
         <div class="paper" id="doc-content"></div>
     </div>
 </div>
@@ -149,7 +145,7 @@
 <!-- Dialogue Modal -->
 <div class="modal" id="modal-dialogue">
     <div class="dialogue-box">
-        <div class="speaker-name" id="dlg-speaker">Неизвестный</div>
+        <div class="speaker-name" id="dlg-speaker">Гостья</div>
         <div class="dialogue-text" id="dlg-text">...</div>
         <div class="choices" id="dlg-choices"></div>
     </div>
@@ -158,7 +154,7 @@
 <!-- Inventory Modal -->
 <div class="modal" id="modal-inventory">
     <div class="dialogue-box">
-        <div class="speaker-name">РЮКЗАК</div>
+        <div class="speaker-name">ВЕЩИ В КАРМАНАХ</div>
         <div class="choices" id="inv-list" style="margin-bottom:20px;"></div>
         <button class="choice-btn" id="btn-close-inv" style="text-align:center;">ЗАКРЫТЬ</button>
     </div>
@@ -169,23 +165,53 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
 import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
 
 // ============================================================================
-// 1. GLOBAL STATE & AUDIO
+// 1. GLOBAL STATE & AUDIO (ПРОКАЧАННЫЙ ЗВУК)
 // ============================================================================
 const STATE = {
     started: false, paused: false, sanity: 100, inventory: [],
-    flags: { foundKey: false, reflectionTriggered: false },
-    yaw: 0, pitch: 0
+    flags: { knifeEquipped: false, guestKilled: false, guestInvited: false },
+    yaw: 0, pitch: 0,
+    velocity: new THREE.Vector3(), // Для плавности ходьбы
+    bobTime: 0,
+    stepTimer: 0
 };
 
 const AudioSys = {
     ctx: null,
+    rainNode: null,
     init() {
-        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        this.startAmbient();
+        if (this.ctx) return;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AC();
+        
+        // Принудительное включение на iOS
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+
+        // Фоновый дождь
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        
+        this.rainNode = this.ctx.createBufferSource();
+        this.rainNode.buffer = buffer;
+        this.rainNode.loop = true;
+        
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        const gain = this.ctx.createGain(); gain.gain.value = 0.15;
+        
+        this.rainNode.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+        this.rainNode.start();
+
+        // Зловещий гул
+        const osc = this.ctx.createOscillator();
+        osc.type = 'sine'; osc.frequency.value = 40;
+        const dGain = this.ctx.createGain(); dGain.gain.value = 0.05;
+        osc.connect(dGain); dGain.connect(this.ctx.destination); osc.start();
     },
     playTone(freq, type, duration, vol) {
         if(!this.ctx) return;
@@ -197,26 +223,14 @@ const AudioSys = {
         osc.connect(gain); gain.connect(this.ctx.destination);
         osc.start(); osc.stop(this.ctx.currentTime + duration);
     },
-    footstep() { this.playTone(50 + Math.random()*20, 'triangle', 0.1, 0.1); },
-    click() { this.playTone(1200, 'square', 0.05, 0.03); },
-    phone() {
-        const ring = () => { this.playTone(1000, 'sine', 0.1, 0.15); setTimeout(()=>this.playTone(1200, 'sine', 0.1, 0.15), 50); };
-        for(let i=0; i<6; i++) setTimeout(ring, i*200);
-        setTimeout(()=>{ for(let i=0; i<6; i++) setTimeout(ring, i*200); }, 1000);
+    footstep() { this.playTone(60 + Math.random()*20, 'triangle', 0.15, 0.15); },
+    click() { this.playTone(1000, 'square', 0.05, 0.03); },
+    stab() {
+        this.playTone(150, 'sawtooth', 0.2, 0.4);
+        setTimeout(() => this.playTone(80, 'square', 0.4, 0.3), 50);
     },
-    startAmbient() {
-        const bufferSize = this.ctx.sampleRate * 2;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-        const rain = this.ctx.createBufferSource(); rain.buffer = buffer; rain.loop = true;
-        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
-        const gain = this.ctx.createGain(); gain.gain.value = 0.12;
-        rain.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination); rain.start();
-        
-        const drone = this.ctx.createOscillator(); drone.type = 'sine'; drone.frequency.value = 45;
-        const dGain = this.ctx.createGain(); dGain.gain.value = 0.05;
-        drone.connect(dGain); dGain.connect(this.ctx.destination); drone.start();
+    knock() {
+        for(let i=0; i<3; i++) setTimeout(() => this.playTone(100, 'square', 0.1, 0.2), i*300);
     }
 };
 
@@ -230,53 +244,56 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMappingExposure = 1.2;
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x050202, 0.06);
+scene.fog = new THREE.FogExp2(0x020202, 0.08); // Густой туман
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 50);
-camera.position.set(0, 1.6, 3);
+camera.position.set(0, 1.6, 4);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-ssaoPass.kernelRadius = 12; ssaoPass.minDistance = 0.005; ssaoPass.maxDistance = 0.1;
-composer.addPass(ssaoPass);
+
+// Постобработка: Bloom и Пленка
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-bloomPass.threshold = 0.3; bloomPass.strength = 0.7; bloomPass.radius = 0.6;
+bloomPass.threshold = 0.2; bloomPass.strength = 0.8; bloomPass.radius = 0.5;
 composer.addPass(bloomPass);
-composer.addPass(new FilmPass(0.35, 0.025, 648.0, false));
+composer.addPass(new FilmPass(0.4, 0.05, 648.0, false));
 
 // ============================================================================
-// 3. WORLD GENERATION
+// 3. WORLD GENERATION (МОТЕЛЬ)
 // ============================================================================
-function createWallpaperTexture() {
+function createBloodTexture() {
     const c = document.createElement('canvas'); c.width = 512; c.height = 512;
-    const ctx = c.getContext('2d'); ctx.fillStyle = '#2b2520'; ctx.fillRect(0,0,512,512);
-    ctx.fillStyle = '#1f1a16';
-    for(let x=0; x<512; x+=64) { for(let y=0; y<512; y+=64) { ctx.beginPath(); ctx.arc(x+32, y+32, 24, 0, Math.PI*2); ctx.fill(); } }
-    for(let i=0; i<300; i++) { ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.4})`; ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*80, Math.random()*80); }
-    const tex = new THREE.CanvasTexture(c); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(4, 2);
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = 'rgba(0,0,0,0)'; ctx.fillRect(0,0,512,512);
+    ctx.fillStyle = '#5a0000';
+    ctx.beginPath(); ctx.arc(256, 256, 100, 0, Math.PI*2); ctx.fill();
+    // Брызги
+    for(let i=0; i<50; i++) {
+        const x = 256 + (Math.random()-0.5)*300;
+        const y = 256 + (Math.random()-0.5)*300;
+        const r = Math.random()*15;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+    }
+    const tex = new THREE.CanvasTexture(c);
     return tex;
 }
-function createCarpetTexture() {
-    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
-    const ctx = c.getContext('2d'); ctx.fillStyle = '#140808'; ctx.fillRect(0,0,512,512);
-    for(let i=0; i<15000; i++) { ctx.fillStyle = `rgba(${40+Math.random()*20}, 5, 5, ${Math.random()*0.6})`; ctx.fillRect(Math.random()*512, Math.random()*512, 2, 2); }
-    ctx.fillStyle = 'rgba(60, 0, 0, 0.9)'; ctx.beginPath(); ctx.arc(250, 250, 80, 0, Math.PI*2); ctx.fill();
-    const tex = new THREE.CanvasTexture(c); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(3, 3);
-    return tex;
+
+function createWallTexture() {
+    const c = document.createElement('canvas'); c.width = 256; c.height = 256;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#1a1a1a'; ctx.fillRect(0,0,256,256);
+    ctx.fillStyle = '#222'; for(let i=0; i<100; i++) ctx.fillRect(Math.random()*256, Math.random()*256, Math.random()*20, Math.random()*20);
+    return new THREE.CanvasTexture(c);
 }
 
 const MATS = {
-    wall: new THREE.MeshStandardMaterial({ map: createWallpaperTexture(), roughness: 0.9, metalness: 0.1 }),
-    wood: new THREE.MeshStandardMaterial({ map: createWallpaperTexture(), color: 0x553322, roughness: 0.7 }),
-    carpet: new THREE.MeshStandardMaterial({ map: createCarpetTexture(), roughness: 1.0 }),
-    ceiling: new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 1.0 }),
-    metal: new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.4, metalness: 0.8 }),
-    glass: new THREE.MeshStandardMaterial({ color: 0x88bbdd, roughness: 0.1, metalness: 0.9, transparent: true, opacity: 0.4 }),
-    fabric: new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1.0 }),
-    tvScreen: new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x0000ff, emissiveIntensity: 1 })
+    wall: new THREE.MeshStandardMaterial({ map: createWallTexture(), roughness: 0.9 }),
+    floor: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1.0 }),
+    wood: new THREE.MeshStandardMaterial({ color: 0x3a2010, roughness: 0.7 }),
+    blood: new THREE.MeshStandardMaterial({ map: createBloodTexture(), transparent: true, roughness: 0.2 }),
+    metal: new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.4, metalness: 0.8 }),
+    glass: new THREE.MeshStandardMaterial({ color: 0x88bbdd, roughness: 0.1, metalness: 0.9, transparent: true, opacity: 0.3 })
 };
 
 const colliders = [];
@@ -290,53 +307,62 @@ function addBox(w, h, d, mat, x, y, z, isCollider = true) {
     return mesh;
 }
 
-// Floor & Ceiling
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.carpet); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
-const ceil = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.ceiling); ceil.rotation.x = Math.PI / 2; ceil.position.y = 3; scene.add(ceil);
+// --- Архитектура: Ресепшен + Коридор ---
+// Пол
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 30), MATS.floor);
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
 
-// Walls
-addBox(0.2, 3, 12, MATS.wall, -4, 1.5, 0); // Left
-addBox(0.2, 3, 12, MATS.wall, 4, 1.5, 0);  // Right
-addBox(8, 3, 0.2, MATS.wall, 0, 1.5, -6);  // Back
-addBox(3, 3, 0.2, MATS.wall, -2.5, 1.5, 6); addBox(3, 3, 0.2, MATS.wall, 2.5, 1.5, 6); // Front
+// Стены ресепшена (вы находитесь за стойкой)
+addBox(8, 4, 0.5, MATS.wall, 0, 2, 0); // Задняя стена
+addBox(0.5, 4, 8, MATS.wall, -4, 2, 4); // Левая
+addBox(0.5, 4, 8, MATS.wall, 4, 2, 4); // Правая
+addBox(8, 4, 0.5, MATS.wall, 0, 2, 8); // Стена с дверью (коридор)
 
-// Bed
-const bedGroup = new THREE.Group();
-bedGroup.add(addBox(2.5, 0.4, 4, MATS.wood, 0, 0.2, 0, false));
-bedGroup.add(addBox(2.3, 0.2, 3.8, MATS.fabric, 0, 0.5, 0, false));
-bedGroup.add(addBox(1.8, 0.15, 0.6, new THREE.MeshStandardMaterial({color:0x888888}), 0, 0.65, -1.3, false));
-bedGroup.position.set(-2.5, 0, -2.5); scene.add(bedGroup);
-colliders.push(new THREE.Box3().setFromObject(bedGroup));
+// Стойка регистрации
+addBox(5, 1.2, 1, MATS.wood, 0, 0.6, 2.5);
 
-// Nightstand & Lamp
-addBox(0.8, 0.8, 0.8, MATS.wood, -0.8, 0.4, -4.5);
-const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.4, 16), new THREE.MeshStandardMaterial({color: 0xffccaa, emissive: 0xff8822, emissiveIntensity: 1}));
-lampShade.position.set(-0.8, 1.2, -4.5); scene.add(lampShade);
-const lampLight = new THREE.PointLight(0xffaa55, 1.5, 6); lampLight.position.set(-0.8, 1.2, -4.5); lampLight.castShadow = true; scene.add(lampLight);
+// Дверь в коридор
+const doorMesh = addBox(1.5, 2.5, 0.2, MATS.wood, 0, 1.25, 7.8);
+interactables.push({ mesh: doorMesh, type: 'door' });
 
-// Desk & TV
-addBox(2, 0.8, 1, MATS.wood, 2, 0.4, -4);
-const tvCase = addBox(1.2, 0.9, 0.9, MATS.metal, 2, 1.25, -4);
-const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), MATS.tvScreen); tvScreen.position.set(2, 1.25, -3.54); scene.add(tvScreen);
-const tvLight = new THREE.PointLight(0x0000ff, 1.5, 5); tvLight.position.set(2, 1.25, -3); scene.add(tvLight);
+// Окно (за ним дождь и тьма)
+const windowMesh = addBox(0.1, 2, 3, MATS.glass, -3.9, 2, 4, false);
+// Свет снаружи (тусклый)
+const moonLight = new THREE.DirectionalLight(0x3355aa, 0.5);
+moonLight.position.set(-10, 5, 0); scene.add(moonLight);
 
-// Door
-const door = addBox(1.8, 2.5, 0.1, MATS.wood, 0, 1.25, 5.95);
-const knob = new THREE.Mesh(new THREE.SphereGeometry(0.05), MATS.metal); knob.position.set(0.7, 1.25, 5.85); scene.add(knob);
+// Детали на столе: Книга регистрации, Нож
+const bookMesh = addBox(0.6, 0.05, 0.4, new THREE.MeshStandardMaterial({color: 0xeeddcc}), 1, 1.22, 2.5, false);
+interactables.push({ mesh: bookMesh, type: 'book' });
 
-// Lighting
-scene.add(new THREE.AmbientLight(0x111122, 0.5));
-const moon = new THREE.DirectionalLight(0x4455aa, 0.3); moon.position.set(-5, 5, 5); scene.add(moon);
-const flashlight = new THREE.SpotLight(0xffeedd, 4, 12, Math.PI/6, 0.5, 1);
+const knifeMesh = addBox(0.05, 0.4, 0.05, MATS.metal, 2, 1.25, 2.5, false); // Клинок
+knifeMesh.rotation.x = Math.PI/2;
+interactables.push({ mesh: knifeMesh, type: 'knife' });
+
+// --- Свет в комнате ---
+scene.add(new THREE.AmbientLight(0x111122, 0.4));
+// Настольная лампа
+const lampLight = new THREE.PointLight(0xffaa55, 2, 8);
+lampLight.position.set(-2, 2, 2); lampLight.castShadow = true; scene.add(lampLight);
+const lampMesh = addBox(0.2, 0.2, 0.2, new THREE.MeshStandardMaterial({color:0xffccaa, emissive:0xff8822}), -2, 1.2, 2.5, false);
+
+// --- ФОНАРЬ ИГРОКА (ЯРКИЙ) ---
+const flashlight = new THREE.SpotLight(0xffffff, 15, 25, Math.PI/5, 0.4, 1); // ОЧЕНЬ ЯРКИЙ
 flashlight.castShadow = true; flashlight.shadow.mapSize.width = 1024; flashlight.shadow.bias = -0.001;
 camera.add(flashlight); flashlight.position.set(0.2, -0.1, 0); flashlight.target.position.set(0, 0, -1); camera.add(flashlight.target);
 scene.add(camera);
 
-// Interactables Registration
-interactables.push({ mesh: tvCase, type: 'tv' });
-interactables.push({ mesh: door, type: 'door' });
-const noteMesh = addBox(0.2, 0.01, 0.3, new THREE.MeshStandardMaterial({color:0xeeeecc}), 1.5, 0.81, -3.8, false);
-interactables.push({ mesh: noteMesh, type: 'document', title: 'Пятно на столе', text: 'Это не чернила. Ты знаешь, что это. Ты помнишь, как пытался отмыть это в ванной, но вода была слишком холодной. <br><br>Ключ от машины был в кармане. Но машины больше нет.' });
+// --- NPC (Гостья за дверью) ---
+// Создаем силуэт за стеклом двери
+const npcSilhouette = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.3, 1.8, 8), new THREE.MeshStandardMaterial({color: 0x000000}));
+npcSilhouette.position.set(0, 0.9, 9.5);
+scene.add(npcSilhouette);
+
+// Кровь на полу (появится позже)
+const bloodDecal = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), MATS.blood);
+bloodDecal.rotation.x = -Math.PI/2; bloodDecal.position.set(0, 0.01, 5);
+bloodDecal.visible = false;
+scene.add(bloodDecal);
 
 // ============================================================================
 // 4. CONTROLS
@@ -384,9 +410,9 @@ lookZone.addEventListener('touchmove', e => {
 lookZone.addEventListener('touchend', e => { for(let t of e.changedTouches) if(t.identifier === lookId) lookId = null; });
 
 // ============================================================================
-// 5. INTERACTION LOGIC
+// 5. INTERACTION
 // ============================================================================
-const raycaster = new THREE.Raycaster(); raycaster.far = 3.5;
+const raycaster = new THREE.Raycaster(); raycaster.far = 4.0;
 const center = new THREE.Vector2(0, 0);
 let activeItem = null;
 const crosshair = document.getElementById('crosshair');
@@ -397,7 +423,7 @@ function checkInteraction() {
     raycaster.setFromCamera(center, camera);
     const hits = raycaster.intersectObjects(interactables.map(i => i.mesh));
 
-    if(hits.length > 0 && camera.position.distanceTo(hits[0].point) < 3.5) {
+    if(hits.length > 0 && camera.position.distanceTo(hits[0].point) < 4.0) {
         const item = interactables.find(i => i.mesh === hits[0].object);
         if(item) {
             activeItem = item;
@@ -414,46 +440,76 @@ function checkInteraction() {
 function doInteract() {
     if(!activeItem) return;
     AudioSys.click();
-    if(activeItem.type === 'document') { showDocument(activeItem.title, activeItem.text); if(activeItem.title === 'Пятно на столе') triggerSanityDrop(15); }
-    else if(activeItem.type === 'tv') { showDocument('Телевизор', 'Экран мерцает. Сквозь белый шум ты слышишь голос. Это твой голос. <br><br>"Ты сам сделал это. Ты сам запер её там. Не притворяйся, что не помнишь."'); triggerSanityDrop(20); }
+
+    if(activeItem.type === 'book') {
+        showDocument('Журнал регистрации', 'Последняя запись: "Номер 1 - Свободен".<br><br>Но ты точно помнишь, что вчера кто-то заселялся. Ты помнишь крик. Ты помнишь, как Мать сказала: "Она не должна была видеть".<br><br>Где ключ от первого номера?');
+    } 
+    else if(activeItem.type === 'knife') {
+        STATE.flags.knifeEquipped = true;
+        STATE.inventory.push({name: 'Окровавленный нож', desc: 'Холодная сталь. Мать одобряет.'});
+        knifeMesh.visible = false;
+        showDocument('Нож', 'Ты берешь нож. Тяжесть в руке успокаивает. Если она узнает правду, придется действовать.');
+        triggerSanityDrop(10);
+    }
     else if(activeItem.type === 'door') {
-        if(STATE.flags.foundKey) triggerEnding();
-        else showDocument('Дверь', 'Заперто. Ключ остался снаружи. Нужно найти запасной. Возможно, он в ванной.');
+        if(!STATE.flags.guestInvited) {
+            STATE.flags.guestInvited = true;
+            // Стук в дверь
+            AudioSys.knock();
+            setTimeout(() => {
+                showDialog('Гостья', 'Здравствуйте... У меня заглохла машина на шоссе. Связи нет. Мне очень страшно, на улице льет как из ведра. Можно я пережду у вас до утра? Я заплачу.', [
+                    { text: 'Впустить её (Номер 1)', action: () => { openDoorEvent(); } },
+                    { text: 'Прогнать её ("Мотель закрыт")', action: () => { 
+                        showDocument('Гостья', 'Она смотрит на тебя с ужасом. "Пожалуйста... Он идет за мной". Она уходит в темноту. Ты слышишь крик вдалеке. Но это не твоя проблема.');
+                        npcSilhouette.visible = false;
+                        triggerSanityDrop(5);
+                    }},
+                    { text: 'Открыть дверь с ножом', action: () => { 
+                        if(STATE.flags.knifeEquipped) triggerMurder();
+                        else { showDocument('Дверь', 'Ты открываешь дверь. Она входит. Ты закрываешь её.'); openDoorEvent(); }
+                    }}
+                ]);
+            }, 2000);
+        } else {
+            showDocument('Дверь', 'Ты уже открыл её сегодня. Она в комнате.');
+        }
     }
 }
 
+function openDoorEvent() {
+    npcSilhouette.visible = false;
+    showDocument('Коридор', 'Ты ведешь её в комнату. В зеркале коридора ты видишь её лицо. Оно кажется тебе знакомым. Слишком знакомым.<br><br>Мать шепчет: "Она знает. Она видела. Закончи это".');
+    triggerSanityDrop(20);
+}
+
+function triggerMurder() {
+    STATE.started = false;
+    AudioSys.stab();
+    document.getElementById('blood-overlay').style.opacity = 1;
+    document.getElementById('blood-flash').style.opacity = 1;
+    npcSilhouette.visible = false;
+    bloodDecal.visible = true;
+    
+    setTimeout(() => {
+        document.getElementById('blood-flash').style.opacity = 0;
+        document.getElementById('end-title').innerText = 'КРОВЬ НА РУКАХ';
+        document.getElementById('end-text').innerText = 'Ты вытираешь нож об её пальто. Мать довольна. Но теперь тебе нужно спрятать тело в болоте за мотелем. Иначе полиция приедет раньше рассвета.';
+        document.getElementById('end-screen').style.display = 'flex';
+    }, 3000);
+}
+
 // ============================================================================
-// 6. UI & GAME STATE
+// 6. UI LOGIC
 // ============================================================================
 function showDocument(title, text) {
     STATE.paused = true;
     document.getElementById('doc-content').innerHTML = `<h2>${title}</h2><p>${text}</p>`;
     document.getElementById('modal-doc').classList.add('active');
 }
-document.getElementById('btn-close-doc').addEventListener('click', () => { document.getElementById('modal-doc').classList.remove('active'); STATE.paused = false; });
-
-function triggerSanityDrop(amount) {
-    STATE.sanity -= amount;
-    document.getElementById('sanity-effect').style.opacity = (100 - STATE.sanity) / 100;
-    AudioSys.playTone(100, 'sawtooth', 2, 0.2);
-    if(STATE.sanity <= 50 && !STATE.flags.reflectionTriggered) {
-        STATE.flags.reflectionTriggered = true;
-        setTimeout(() => {
-            showDialog('Голос в голове', 'Ты смотришь на кровать. Там кто-то сидит. Ты моргаешь — никого нет. Но кровать смята. Ключ от номера теперь у тебя в кармане.', [
-                { text: 'Взять ключ', action: () => { STATE.flags.foundKey = true; STATE.inventory.push({name: 'Ржавый ключ 07', desc: 'Найден в ванной'}); } }
-            ]);
-            scene.userData.tvLight.color.setHex(0xff0000);
-            tvScreen.material.emissive.setHex(0xff0000);
-        }, 2000);
-    }
-}
-
-function triggerEnding() {
-    STATE.started = false;
-    document.getElementById('hud').classList.remove('active');
-    document.getElementById('modal-doc').classList.remove('active');
-    document.getElementById('end-screen').style.display = 'flex';
-}
+document.getElementById('btn-close-doc').addEventListener('click', () => { 
+    document.getElementById('modal-doc').classList.remove('active'); 
+    STATE.paused = false; 
+});
 
 function showDialog(speaker, text, choices) {
     STATE.paused = true;
@@ -468,14 +524,19 @@ function showDialog(speaker, text, choices) {
     document.getElementById('modal-dialogue').classList.add('active');
 }
 
-// Buttons Hookup
+function triggerSanityDrop(amount) {
+    STATE.sanity -= amount;
+    document.getElementById('sanity-effect').style.opacity = (100 - STATE.sanity) / 100;
+    AudioSys.playTone(80, 'sawtooth', 2, 0.1);
+}
+
 document.getElementById('btn-interact').addEventListener('touchstart', e => { e.preventDefault(); doInteract(); });
 document.getElementById('btn-flashlight').addEventListener('touchstart', e => { e.preventDefault(); toggleLight(); });
 document.getElementById('btn-inventory').addEventListener('touchstart', e => {
     e.preventDefault(); STATE.paused = true;
     const list = document.getElementById('inv-list'); list.innerHTML = '';
-    if(STATE.inventory.length === 0) list.innerHTML = '<div style="color:#555">Пусто</div>';
-    else STATE.inventory.forEach(i => list.innerHTML += `<div class="choice-btn" style="cursor:default; border-color:#333;"><b>${i.name}</b><br><small style="color:#666">${i.desc}</small></div>`);
+    if(STATE.inventory.length === 0) list.innerHTML = '<div style="color:#555">Карманы пусты</div>';
+    else STATE.inventory.forEach(i => list.innerHTML += `<div class="choice-btn" style="cursor:default; border-color:#333;"><b>${i.name}</b><br><small style="color:#999">${i.desc}</small></div>`);
     document.getElementById('modal-inventory').classList.add('active');
 });
 document.getElementById('btn-close-inv').addEventListener('click', () => { document.getElementById('modal-inventory').classList.remove('active'); STATE.paused = false; });
@@ -487,9 +548,9 @@ function toggleLight() {
 }
 
 // ============================================================================
-// 7. MAIN LOOP
+// 7. GAME LOOP (С ПЛАВНОЙ ФИЗИКОЙ)
 // ============================================================================
-let lastTime = performance.now(), stepTimer = 0, bobTime = 0;
+let lastTime = performance.now();
 
 function animate() {
     requestAnimationFrame(animate);
@@ -502,27 +563,43 @@ function animate() {
         const len = Math.hypot(moveX, moveZ);
         if(len > 1) { moveX /= len; moveZ /= len; }
 
-        const speed = 3.0 * dt;
+        const speed = 4.0;
         const forward = new THREE.Vector3(-Math.sin(STATE.yaw), 0, -Math.cos(STATE.yaw));
         const right = new THREE.Vector3(Math.cos(STATE.yaw), 0, -Math.sin(STATE.yaw));
-        const velocity = new THREE.Vector3().addScaledVector(forward, -moveZ * speed).addScaledVector(right, moveX * speed);
-        const newPos = camera.position.clone().add(velocity);
         
-        const pBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(newPos.x, 1.0, newPos.z), new THREE.Vector3(0.6, 2.0, 0.6));
+        // Целевая скорость
+        const targetVel = new THREE.Vector3()
+            .addScaledVector(forward, -moveZ * speed)
+            .addScaledVector(right, moveX * speed);
+
+        // Плавная интерполяция скорости (инерция)
+        STATE.velocity.lerp(targetVel, dt * 10);
+
+        const newPos = camera.position.clone().addScaledVector(STATE.velocity, dt);
+        
+        // Проверка коллизий (упрощенная)
+        const pBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(newPos.x, 1.0, newPos.z), new THREE.Vector3(0.5, 2.0, 0.5));
         let collided = false;
         for(let box of colliders) if(pBox.intersectsBox(box)) { collided = true; break; }
 
         if(!collided) {
             camera.position.x = newPos.x; camera.position.z = newPos.z;
-            if(len > 0.1) { bobTime += dt * 12; stepTimer -= dt; if(stepTimer <= 0) { AudioSys.footstep(); stepTimer = 0.4; } }
+            
+            // Реалистичный шаг (Head Bobbing)
+            if(STATE.velocity.length() > 0.5) {
+                STATE.bobTime += dt * 15;
+                STATE.stepTimer -= dt;
+                if(STATE.stepTimer <= 0) { AudioSys.footstep(); STATE.stepTimer = 0.45; }
+            }
         }
 
-        camera.position.y = 1.6 + Math.sin(bobTime) * 0.03;
-        camera.rotation.set(0, 0, 0); camera.rotateY(STATE.yaw); camera.rotateX(STATE.pitch);
+        // Применение позиции и наклона камеры
+        camera.position.y = 1.6 + Math.sin(STATE.bobTime) * 0.04;
+        camera.rotation.set(0, 0, 0); 
+        camera.rotateY(STATE.yaw); 
+        camera.rotateX(STATE.pitch);
 
         checkInteraction();
-
-        if(Math.random() > 0.95) { tvScreen.material.emissiveIntensity = Math.random() * 2; tvLight.intensity = Math.random() * 2; }
     }
     composer.render();
 }
@@ -531,25 +608,28 @@ function animate() {
 // 8. INIT
 // ============================================================================
 document.getElementById('btn-start').addEventListener('click', () => {
+    // Активация звука (Требование iOS)
     AudioSys.init();
+    
     document.getElementById('start-screen').style.display = 'none';
     document.getElementById('hud').classList.add('active');
     STATE.started = true;
+    
+    // Скриптовая сцена: Стук в дверь через 4 секунды
     setTimeout(() => {
-        AudioSys.phone();
-        setTimeout(() => {
-            showDialog('Телефон', 'Ты поднимаешь трубку. Слышен только дождь и тяжелое дыхание. <br><br>"Ванная. Посмотри в ванной."', [
-                { text: 'Проверить ванную', action: () => { triggerSanityDrop(10); } },
-                { text: 'Бросить трубку', action: () => { triggerSanityDrop(5); } }
-            ]);
-        }, 3000);
-    }, 1000);
+        AudioSys.knock();
+        showDocument('Ночь. Мотель.', 'Льет дождь. Ты за стойкой регистрации. В дверь стучат. На улице стоит девушка, она промокла насквозь. Она выглядит испуганной.<br><br>Голос Матери в твоей голове: "Не впускай её. Она принесла беду".');
+        npcSilhouette.visible = true; // Появление силуэта
+    }, 4000);
 });
 
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight); composer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// Кнопка перезапуска (в конце)
+document.getElementById('end-screen').innerHTML += '<button class="start-btn" style="margin-top:30px;" onclick="location.reload()">ПЕРЕЗАПУСТИТЬ</button>';
 
 animate();
 </script>
