@@ -16,75 +16,75 @@
         #game-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
 
         /* Effects */
-        #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; box-shadow: inset 0 0 200px rgba(0,0,0,0.9); }
-        #sanity-effect { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; background: radial-gradient(circle, transparent 50%, rgba(100,0,0,0.4) 100%); opacity: 0; transition: opacity 2s; }
-        #film-grain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; opacity: 0.15; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        #vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; box-shadow: inset 0 0 200px rgba(0,0,0,0.95); }
+        #sanity-effect { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; background: radial-gradient(circle, transparent 40%, rgba(80,0,0,0.6) 100%); opacity: 0; transition: opacity 2s; }
+        #film-grain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; opacity: 0.12; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
 
         /* HUD Layer */
         #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: none; }
         #hud.active { display: block; }
 
+        /* Crosshair */
+        #crosshair { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; transform: translate(-50%, -50%); transition: all 0.2s; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
+        #crosshair.interactable { width: 12px; height: 12px; background: rgba(200, 40, 40, 0.8); box-shadow: 0 0 15px rgba(200, 40, 40, 0.8); }
+
         /* Mobile Controls */
-        #joy-zone { position: absolute; bottom: 40px; left: 40px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); pointer-events: auto; }
-        #joy-knob { position: absolute; width: 60px; height: 60px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; top: 40px; left: 40px; transition: transform 0.05s; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        #joy-zone { position: absolute; bottom: 40px; left: 40px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); pointer-events: auto; backdrop-filter: blur(5px); }
+        #joy-knob { position: absolute; width: 56px; height: 56px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; top: 37px; left: 37px; transition: transform 0.05s; box-shadow: 0 0 15px rgba(0,0,0,0.6); }
         
         #look-zone { position: absolute; top: 0; right: 0; width: 60%; height: 100%; pointer-events: auto; }
 
-        #btn-group { position: absolute; bottom: 40px; right: 40px; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
-        .btn { pointer-events: auto; width: 70px; height: 70px; border-radius: 50%; background: rgba(15,15,20,0.7); border: 1px solid rgba(255,255,255,0.2); color: #aaa; font-size: 12px; display: flex; align-items: center; justify-content: center; text-align: center; backdrop-filter: blur(4px); transition: 0.1s; font-weight: 600; }
-        .btn:active { transform: scale(0.9); background: rgba(80,80,80,0.8); color: #fff; }
-        .btn.active { border-color: #ff3333; color: #ff3333; box-shadow: 0 0 15px rgba(255,50,50,0.4); }
-        .btn-big { width: 85px; height: 85px; background: rgba(30,10,10,0.8); border-color: #661111; }
+        /* Action Buttons Layout */
+        #btn-group { position: absolute; bottom: 40px; right: 40px; width: 180px; height: 180px; pointer-events: none; }
+        
+        .btn { pointer-events: auto; position: absolute; display: flex; align-items: center; justify-content: center; background: rgba(15,15,20,0.6); border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px); transition: all 0.1s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .btn:active { transform: scale(0.9); background: rgba(50,50,60,0.8); }
+        .btn svg { width: 32px; height: 32px; fill: #a0a0a0; transition: all 0.2s; }
+        
+        /* Action Button (Big, Right) */
+        #btn-interact { width: 80px; height: 80px; border-radius: 50%; bottom: 0; right: 0; border-color: rgba(150, 30, 30, 0.4); background: rgba(30, 10, 10, 0.7); }
+        #btn-interact svg { width: 40px; height: 40px; fill: #ff4a4a; }
+        #btn-interact.glow { box-shadow: 0 0 25px rgba(255, 50, 50, 0.6); border-color: #ff4a4a; }
 
-        /* Prompts */
-        #interact-prompt { position: absolute; bottom: 180px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 10px 20px; border: 1px solid #444; border-radius: 4px; font-size: 14px; letter-spacing: 1px; display: none; }
-        #interact-prompt.show { display: block; animation: pulse 1.5s infinite; }
+        /* Secondary Buttons */
+        #btn-flashlight { width: 60px; height: 60px; border-radius: 50%; bottom: 90px; right: 10px; }
+        #btn-flashlight.active svg { fill: #fff; filter: drop-shadow(0 0 8px #fff); }
+        
+        #btn-inventory { width: 60px; height: 60px; border-radius: 50%; bottom: 10px; right: 90px; }
 
         /* UI Modals */
-        .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; pointer-events: auto; padding: 20px; }
+        .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 100; display: none; align-items: center; justify-content: center; pointer-events: auto; padding: 20px; }
         .modal.active { display: flex; }
         
-        /* Document Style (Old Paper) */
-        .paper { background: #e8e2cd; color: #111; padding: 40px; width: 100%; max-width: 700px; max-height: 85vh; overflow-y: auto; font-family: 'Special Elite', monospace; font-size: 18px; line-height: 1.6; box-shadow: inset 0 0 50px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.9); border-radius: 2px; position: relative; }
-        .paper::before { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.4"/%3E%3C/svg%3E'); pointer-events: none; mix-blend-mode: multiply; }
-        .paper h2 { font-size: 26px; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; font-weight: normal; }
-        .paper .blood-text { color: #800; font-weight: bold; }
+        /* Document Modal */
+        #modal-doc { background: rgba(0,0,0,0.92); }
+        .paper-container { position: relative; width: 100%; max-width: 700px; max-height: 85vh; }
+        .paper { background: #e8e2cd; color: #111; padding: 40px; width: 100%; height: 100%; overflow-y: auto; font-family: 'Special Elite', monospace; font-size: 18px; line-height: 1.6; box-shadow: inset 0 0 60px rgba(0,0,0,0.2), 0 20px 50px rgba(0,0,0,0.9); border-radius: 2px; }
+        .paper::before { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.4"/%3E%3C/svg%3E'); pointer-events: none; mix-blend-mode: multiply; }
+        .paper h2 { font-size: 24px; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; }
         
+        /* Close Button (X) for Documents */
+        .btn-close-ui { position: absolute; top: -15px; right: -15px; width: 44px; height: 44px; border-radius: 50%; background: rgba(40,40,40,0.9); border: 1px solid #555; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .btn-close-ui:active { background: #7a1f1f; border-color: #ff3333; }
+
         /* Dialogue Style */
-        .dialogue-box { background: rgba(5,5,10,0.95); border: 1px solid #333; border-top: 4px solid #7a1f1f; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
+        .dialogue-box { background: rgba(5,5,10,0.95); border: 1px solid #333; border-top: 4px solid #7a1f1f; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); border-radius: 8px; }
         .speaker-name { color: #9b2929; font-size: 20px; font-weight: 800; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
         .dialogue-text { font-size: 18px; line-height: 1.6; color: #bbb; margin-bottom: 30px; }
         .choices { display: flex; flex-direction: column; gap: 12px; }
-        .choice-btn { background: transparent; border: 1px solid #444; color: #999; padding: 15px 20px; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; }
-        .choice-btn:active, .choice-btn:hover { background: rgba(122,31,31,0.2); border-color: #9b2929; color: #fff; }
+        .choice-btn { background: transparent; border: 1px solid #444; color: #999; padding: 15px 20px; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; border-radius: 4px; }
+        .choice-btn:active { background: rgba(122,31,31,0.3); border-color: #9b2929; color: #fff; }
 
         /* Start Screen */
         #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #start-title { font-family: 'Special Elite', monospace; font-size: 64px; letter-spacing: 4px; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.2); margin-bottom: 10px; }
         #start-sub { font-size: 14px; color: #9b2929; letter-spacing: 8px; margin-bottom: 50px; text-transform: uppercase; font-weight: 600; }
         .start-btn { background: transparent; border: 1px solid #444; color: #aaa; padding: 15px 40px; font-size: 18px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .start-btn:hover { background: #fff; color: #000; border-color: #fff; }
-        #loading-bar { width: 0%; height: 2px; background: #9b2929; position: absolute; bottom: 0; left: 0; transition: width 0.3s; }
-
-        /* End Screen */
-        #end-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; }
-        #end-title { font-size: 48px; color: #9b2929; font-family: 'Special Elite', monospace; margin-bottom: 20px; }
-        #end-text { font-size: 18px; max-width: 600px; line-height: 1.6; color: #888; margin-bottom: 40px; }
-
-        /* Inventory */
-        .inv-container { background: rgba(10,10,15,0.95); border: 1px solid #333; padding: 30px; width: 100%; max-width: 800px; }
-        .inv-title { color: #fff; font-size: 24px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .inv-item { background: #151520; border: 1px solid #222; padding: 15px; cursor: pointer; transition: 0.2s; }
-        .inv-item:active { border-color: #9b2929; }
-        .inv-item-name { color: #ccc; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
-        .inv-item-desc { color: #666; font-size: 12px; }
+        .start-btn:active { background: #fff; color: #000; border-color: #fff; }
 
         /* Portrait Warning */
         #portrait-warning { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         @media (orientation: portrait) { #portrait-warning { display: flex; } }
-
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
     </style>
     <script type="importmap">
     {
@@ -106,10 +106,6 @@
     <div id="start-title">NIGHTSHADE</div>
     <div id="start-sub">MOTEL · GREYHAVEN · 1998</div>
     <button class="start-btn" id="btn-start">ВОЙТИ В НОМЕР 07</button>
-    <div style="margin-top:40px; font-size:12px; color:#444; max-width:400px; text-align:center; line-height:1.5;">
-        ВНИМАНИЕ: Игра содержит психологический хоррор, кровь и резкие звуки. Рекомендуется играть в наушниках и в темноте.
-    </div>
-    <div id="loading-bar"></div>
 </div>
 
 <canvas id="game-canvas"></canvas>
@@ -119,22 +115,35 @@
 <div id="film-grain"></div>
 
 <div id="hud">
+    <div id="crosshair"></div>
+    
     <div id="joy-zone"><div id="joy-knob"></div></div>
     <div id="look-zone"></div>
     
     <div id="btn-group">
-        <button class="btn btn-big" id="btn-interact">ДЕЙСТВИЕ</button>
-        <button class="btn active" id="btn-flashlight">ФОНАРЬ</button>
-        <button class="btn" id="btn-inventory">РЮКЗАК</button>
+        <!-- Иконка глаза (Действие) -->
+        <button class="btn" id="btn-interact">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </button>
+        
+        <!-- Иконка фонарика -->
+        <button class="btn active" id="btn-flashlight">
+            <svg viewBox="0 0 24 24"><path d="M18 2H6v6l2 3v11h8V11l2-3V2zm-2 6.4V4h-8v4.4l-2 3V20h12v-8.6l-2-3zM9 18h6v2H9z"/></svg>
+        </button>
+        
+        <!-- Иконка рюкзака -->
+        <button class="btn" id="btn-inventory">
+            <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H7v4H4v12h16V8zm-9-2h2v2h-2V6zm7 12H6v-4h12v4zm0-6H6v-4h12v4z"/></svg>
+        </button>
     </div>
-    
-    <div id="interact-prompt">Взаимодействовать</div>
 </div>
 
 <!-- Document Modal -->
 <div class="modal" id="modal-doc">
-    <div class="paper" id="doc-content"></div>
-    <button class="start-btn" id="btn-close-doc" style="margin-top:20px; color:#fff; border-color:#fff; width:200px;">ЗАКРЫТЬ</button>
+    <div class="paper-container">
+        <div class="btn-close-ui" id="btn-close-doc">×</div>
+        <div class="paper" id="doc-content"></div>
+    </div>
 </div>
 
 <!-- Dialogue Modal -->
@@ -148,18 +157,11 @@
 
 <!-- Inventory Modal -->
 <div class="modal" id="modal-inventory">
-    <div class="inv-container">
-        <div class="inv-title">ИНВЕНТАРЬ</div>
-        <div class="inv-grid" id="inv-grid"></div>
-        <button class="start-btn" id="btn-close-inv" style="margin-top:20px; width:100%;">ЗАКРЫТЬ</button>
+    <div class="dialogue-box">
+        <div class="speaker-name">РЮКЗАК</div>
+        <div class="choices" id="inv-list" style="margin-bottom:20px;"></div>
+        <button class="choice-btn" id="btn-close-inv" style="text-align:center;">ЗАКРЫТЬ</button>
     </div>
-</div>
-
-<!-- End Screen -->
-<div id="end-screen">
-    <div id="end-title">КОНЕЦ</div>
-    <div id="end-text">...</div>
-    <button class="start-btn" onclick="location.reload()">НАЧАТЬ ЗАНОВО</button>
 </div>
 
 <script type="module">
@@ -171,203 +173,55 @@ import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
 import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
 
 // ============================================================================
-// 1. GLOBAL STATE & CONSTANTS (СИСТЕМА СОСТОЯНИЙ)
+// 1. GLOBAL STATE & AUDIO
 // ============================================================================
 const STATE = {
-    started: false,
-    paused: false,
-    inMenu: false,
-    sanity: 100,
-    inventory: [],
-    flags: {
-        readJournal: false,
-        foundKey: false,
-        openedBathroom: false,
-        answeredPhone: false,
-        reflectionTriggered: false,
-        ending: null
-    },
-    position: new THREE.Vector3(0, 1.6, 3),
-    yaw: 0,
-    pitch: 0
+    started: false, paused: false, sanity: 100, inventory: [],
+    flags: { foundKey: false, reflectionTriggered: false },
+    yaw: 0, pitch: 0
 };
 
-// ============================================================================
-// 2. AUDIO ENGINE (ПРОЦЕДУРНЫЙ ЗВУК)
-// ============================================================================
-class SoundEngine {
-    constructor() {
-        this.ctx = null;
-        this.rainSource = null;
-        this.droneOsc = null;
-    }
+const AudioSys = {
+    ctx: null,
     init() {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        this.ctx = new AC();
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         this.startAmbient();
-    }
+    },
     playTone(freq, type, duration, vol) {
         if(!this.ctx) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
         gain.gain.setValueAtTime(vol, this.ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + duration);
-    }
-    footstep() {
-        this.playTone(50 + Math.random()*20, 'triangle', 0.1, 0.15);
-    }
-    click() {
-        this.playTone(1200, 'square', 0.05, 0.05);
-    }
-    doorCreak() {
-        if(!this.ctx) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(200, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 1);
-        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
         osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(this.ctx.currentTime + 1);
-    }
-    phoneRing() {
-        if(!this.ctx) return;
-        const ring = () => {
-            this.playTone(1000, 'sine', 0.1, 0.2);
-            setTimeout(()=>this.playTone(1200, 'sine', 0.1, 0.2), 50);
-        };
+        osc.start(); osc.stop(this.ctx.currentTime + duration);
+    },
+    footstep() { this.playTone(50 + Math.random()*20, 'triangle', 0.1, 0.1); },
+    click() { this.playTone(1200, 'square', 0.05, 0.03); },
+    phone() {
+        const ring = () => { this.playTone(1000, 'sine', 0.1, 0.15); setTimeout(()=>this.playTone(1200, 'sine', 0.1, 0.15), 50); };
         for(let i=0; i<6; i++) setTimeout(ring, i*200);
         setTimeout(()=>{ for(let i=0; i<6; i++) setTimeout(ring, i*200); }, 1000);
-    }
+    },
     startAmbient() {
-        if(!this.ctx) return;
-        // Rain noise (Buffer)
         const bufferSize = this.ctx.sampleRate * 2;
         const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const rain = this.ctx.createBufferSource(); rain.buffer = buffer; rain.loop = true;
+        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800;
+        const gain = this.ctx.createGain(); gain.gain.value = 0.12;
+        rain.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination); rain.start();
         
-        this.rainSource = this.ctx.createBufferSource();
-        this.rainSource.buffer = buffer;
-        this.rainSource.loop = true;
-        
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 800;
-        
-        const gain = this.ctx.createGain();
-        gain.gain.value = 0.15; // Volume of rain
-        
-        this.rainSource.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-        this.rainSource.start();
-
-        // Low drone
-        this.droneOsc = this.ctx.createOscillator();
-        this.droneOsc.type = 'sine';
-        this.droneOsc.frequency.value = 45;
-        const dGain = this.ctx.createGain();
-        dGain.gain.value = 0.05;
-        this.droneOsc.connect(dGain);
-        dGain.connect(this.ctx.destination);
-        this.droneOsc.start();
+        const drone = this.ctx.createOscillator(); drone.type = 'sine'; drone.frequency.value = 45;
+        const dGain = this.ctx.createGain(); dGain.gain.value = 0.05;
+        drone.connect(dGain); dGain.connect(this.ctx.destination); drone.start();
     }
-}
-const AudioSys = new SoundEngine();
+};
 
 // ============================================================================
-// 3. PROCEDURAL TEXTURES (ГЕНЕРАЦИЯ ТЕКСТУР ВЫСОКОГО КАЧЕСТВА)
-// ============================================================================
-function createNoiseTexture(width, height, baseColor, noiseColor, intensity, repeatX=1, repeatY=1) {
-    const c = document.createElement('canvas');
-    c.width = width; c.height = height;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = baseColor;
-    ctx.fillRect(0, 0, width, height);
-    for (let i = 0; i < width * height * 0.2; i++) {
-        ctx.fillStyle = noiseColor;
-        ctx.globalAlpha = Math.random() * intensity;
-        ctx.fillRect(Math.random() * width, Math.random() * height, Math.random() * 3 + 1, Math.random() * 3 + 1);
-    }
-    const tex = new THREE.CanvasTexture(c);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(repeatX, repeatY);
-    return tex;
-}
-
-function createWoodTexture() {
-    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#110a05'; ctx.fillRect(0,0,512,512);
-    for(let i=0; i<400; i++) {
-        ctx.fillStyle = `rgba(${40+Math.random()*30}, ${20+Math.random()*10}, 0, ${Math.random()*0.4})`;
-        ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*200+50, Math.random()*2+1);
-    }
-    const tex = new THREE.CanvasTexture(c);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(2, 2);
-    return tex;
-}
-
-function createWallpaperTexture() {
-    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#2b2520'; ctx.fillRect(0,0,512,512);
-    // Ornamental pattern
-    ctx.fillStyle = '#1f1a16';
-    for(let x=0; x<512; x+=64) {
-        for(let y=0; y<512; y+=64) {
-            ctx.beginPath();
-            ctx.arc(x+32, y+32, 24, 0, Math.PI*2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x+32, y+32, 12, 0, Math.PI*2);
-            ctx.fillStyle = '#2b2520';
-            ctx.fill();
-            ctx.fillStyle = '#1f1a16';
-        }
-    }
-    // Grime and water damage
-    for(let i=0; i<300; i++) {
-        ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.4})`;
-        ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*80, Math.random()*80);
-    }
-    const tex = new THREE.CanvasTexture(c);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(4, 2);
-    return tex;
-}
-
-function createCarpetTexture() {
-    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#140808'; ctx.fillRect(0,0,512,512);
-    for(let i=0; i<15000; i++) {
-        ctx.fillStyle = `rgba(${40+Math.random()*20}, ${5}, ${5}, ${Math.random()*0.6})`;
-        ctx.fillRect(Math.random()*512, Math.random()*512, 2, 2);
-    }
-    // Blood splatter
-    ctx.fillStyle = 'rgba(60, 0, 0, 0.9)';
-    ctx.beginPath(); ctx.arc(250, 250, 80, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(320, 300, 40, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(180, 280, 20, 0, Math.PI*2); ctx.fill();
-    
-    const tex = new THREE.CanvasTexture(c);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(3, 3);
-    return tex;
-}
-
-// ============================================================================
-// 4. THREE.JS SETUP & RENDER PIPELINE
+// 2. THREE.JS SETUP & POST-PROCESSING
 // ============================================================================
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -381,36 +235,42 @@ renderer.toneMappingExposure = 1.1;
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x050202, 0.06);
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 50);
+camera.position.set(0, 1.6, 3);
 
-// Post-Processing Pipeline
 const composer = new EffectComposer(renderer);
-const renderPass = new RenderPass(scene, camera);
-composer.addPass(renderPass);
-
+composer.addPass(new RenderPass(scene, camera));
 const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-ssaoPass.kernelRadius = 12;
-ssaoPass.minDistance = 0.005;
-ssaoPass.maxDistance = 0.1;
+ssaoPass.kernelRadius = 12; ssaoPass.minDistance = 0.005; ssaoPass.maxDistance = 0.1;
 composer.addPass(ssaoPass);
-
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-bloomPass.threshold = 0.3;
-bloomPass.strength = 0.7;
-bloomPass.radius = 0.6;
+bloomPass.threshold = 0.3; bloomPass.strength = 0.7; bloomPass.radius = 0.6;
 composer.addPass(bloomPass);
-
-const filmPass = new FilmPass(0.35, 0.025, 648.0, false);
-composer.addPass(filmPass);
+composer.addPass(new FilmPass(0.35, 0.025, 648.0, false));
 
 // ============================================================================
-// 5. WORLD BUILDING (ДЕТАЛИЗИРОВАННОЕ ОКРУЖЕНИЕ)
+// 3. WORLD GENERATION
 // ============================================================================
-const colliders = [];
-const interactables = [];
+function createWallpaperTexture() {
+    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#2b2520'; ctx.fillRect(0,0,512,512);
+    ctx.fillStyle = '#1f1a16';
+    for(let x=0; x<512; x+=64) { for(let y=0; y<512; y+=64) { ctx.beginPath(); ctx.arc(x+32, y+32, 24, 0, Math.PI*2); ctx.fill(); } }
+    for(let i=0; i<300; i++) { ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.4})`; ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*80, Math.random()*80); }
+    const tex = new THREE.CanvasTexture(c); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(4, 2);
+    return tex;
+}
+function createCarpetTexture() {
+    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#140808'; ctx.fillRect(0,0,512,512);
+    for(let i=0; i<15000; i++) { ctx.fillStyle = `rgba(${40+Math.random()*20}, 5, 5, ${Math.random()*0.6})`; ctx.fillRect(Math.random()*512, Math.random()*512, 2, 2); }
+    ctx.fillStyle = 'rgba(60, 0, 0, 0.9)'; ctx.beginPath(); ctx.arc(250, 250, 80, 0, Math.PI*2); ctx.fill();
+    const tex = new THREE.CanvasTexture(c); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(3, 3);
+    return tex;
+}
 
 const MATS = {
     wall: new THREE.MeshStandardMaterial({ map: createWallpaperTexture(), roughness: 0.9, metalness: 0.1 }),
-    wood: new THREE.MeshStandardMaterial({ map: createWoodTexture(), roughness: 0.7, metalness: 0.0 }),
+    wood: new THREE.MeshStandardMaterial({ map: createWallpaperTexture(), color: 0x553322, roughness: 0.7 }),
     carpet: new THREE.MeshStandardMaterial({ map: createCarpetTexture(), roughness: 1.0 }),
     ceiling: new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 1.0 }),
     metal: new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.4, metalness: 0.8 }),
@@ -419,380 +279,224 @@ const MATS = {
     tvScreen: new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x0000ff, emissiveIntensity: 1 })
 };
 
+const colliders = [];
+const interactables = [];
+
 function addBox(w, h, d, mat, x, y, z, isCollider = true) {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    mesh.position.set(x, y, z);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true;
     scene.add(mesh);
     if(isCollider) colliders.push(new THREE.Box3().setFromObject(mesh));
     return mesh;
 }
 
-function createRoom() {
-    // Floor & Ceiling
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.carpet);
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    scene.add(floor);
+// Floor & Ceiling
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.carpet); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const ceil = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.ceiling); ceil.rotation.x = Math.PI / 2; ceil.position.y = 3; scene.add(ceil);
 
-    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(8, 12), MATS.ceiling);
-    ceil.rotation.x = Math.PI / 2;
-    ceil.position.y = 3;
-    scene.add(ceil);
+// Walls
+addBox(0.2, 3, 12, MATS.wall, -4, 1.5, 0); // Left
+addBox(0.2, 3, 12, MATS.wall, 4, 1.5, 0);  // Right
+addBox(8, 3, 0.2, MATS.wall, 0, 1.5, -6);  // Back
+addBox(3, 3, 0.2, MATS.wall, -2.5, 1.5, 6); addBox(3, 3, 0.2, MATS.wall, 2.5, 1.5, 6); // Front
 
-    // Walls
-    addBox(0.2, 3, 12, MATS.wall, -4, 1.5, 0); // Left
-    addBox(0.2, 3, 12, MATS.wall, 4, 1.5, 0);  // Right
-    addBox(8, 3, 0.2, MATS.wall, 0, 1.5, -6);  // Back
-    
-    // Front wall with door gap
-    addBox(3, 3, 0.2, MATS.wall, -2.5, 1.5, 6);
-    addBox(3, 3, 0.2, MATS.wall, 2.5, 1.5, 6);
-    addBox(2, 1, 0.2, MATS.wall, 0, 2.5, 6);
+// Bed
+const bedGroup = new THREE.Group();
+bedGroup.add(addBox(2.5, 0.4, 4, MATS.wood, 0, 0.2, 0, false));
+bedGroup.add(addBox(2.3, 0.2, 3.8, MATS.fabric, 0, 0.5, 0, false));
+bedGroup.add(addBox(1.8, 0.15, 0.6, new THREE.MeshStandardMaterial({color:0x888888}), 0, 0.65, -1.3, false));
+bedGroup.position.set(-2.5, 0, -2.5); scene.add(bedGroup);
+colliders.push(new THREE.Box3().setFromObject(bedGroup));
 
-    // --- Furniture ---
-    // Bed
-    const bedGroup = new THREE.Group();
-    const bedBase = addBox(2.5, 0.4, 4, MATS.wood, 0, 0.2, 0, false);
-    const mattress = addBox(2.3, 0.2, 3.8, MATS.fabric, 0, 0.5, 0, false);
-    const pillow = addBox(1.8, 0.15, 0.6, new THREE.MeshStandardMaterial({color:0x888888}), 0, 0.65, -1.3, false);
-    bedGroup.add(bedBase, mattress, pillow);
-    bedGroup.position.set(-2.5, 0, -2.5);
-    scene.add(bedGroup);
-    colliders.push(new THREE.Box3().setFromObject(bedGroup));
+// Nightstand & Lamp
+addBox(0.8, 0.8, 0.8, MATS.wood, -0.8, 0.4, -4.5);
+const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.4, 16), new THREE.MeshStandardMaterial({color: 0xffccaa, emissive: 0xff8822, emissiveIntensity: 1}));
+lampShade.position.set(-0.8, 1.2, -4.5); scene.add(lampShade);
+const lampLight = new THREE.PointLight(0xffaa55, 1.5, 6); lampLight.position.set(-0.8, 1.2, -4.5); lampLight.castShadow = true; scene.add(lampLight);
 
-    // Nightstand & Lamp
-    addBox(0.8, 0.8, 0.8, MATS.wood, -0.8, 0.4, -4.5);
-    const lampBase = addBox(0.1, 0.4, 0.1, MATS.metal, -0.8, 0.8, -4.5, false);
-    const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.4, 16), new THREE.MeshStandardMaterial({color: 0xffccaa, emissive: 0xff8822, emissiveIntensity: 1}));
-    lampShade.position.set(-0.8, 1.2, -4.5);
-    scene.add(lampShade);
-    
-    // Lamp Light
-    const lampLight = new THREE.PointLight(0xffaa55, 1.5, 6);
-    lampLight.position.set(-0.8, 1.2, -4.5);
-    lampLight.castShadow = true;
-    lampLight.shadow.mapSize.width = 1024;
-    scene.add(lampLight);
+// Desk & TV
+addBox(2, 0.8, 1, MATS.wood, 2, 0.4, -4);
+const tvCase = addBox(1.2, 0.9, 0.9, MATS.metal, 2, 1.25, -4);
+const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), MATS.tvScreen); tvScreen.position.set(2, 1.25, -3.54); scene.add(tvScreen);
+const tvLight = new THREE.PointLight(0x0000ff, 1.5, 5); tvLight.position.set(2, 1.25, -3); scene.add(tvLight);
 
-    // Desk & TV
-    addBox(2, 0.8, 1, MATS.wood, 2, 0.4, -4);
-    const tvCase = addBox(1.2, 0.9, 0.9, new THREE.MeshStandardMaterial({color:0x111111}), 2, 1.25, -4);
-    const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), MATS.tvScreen);
-    tvScreen.position.set(2, 1.25, -3.54);
-    scene.add(tvScreen);
-    
-    const tvLight = new THREE.PointLight(0x0000ff, 1.5, 5);
-    tvLight.position.set(2, 1.25, -3);
-    scene.add(tvLight);
+// Door
+const door = addBox(1.8, 2.5, 0.1, MATS.wood, 0, 1.25, 5.95);
+const knob = new THREE.Mesh(new THREE.SphereGeometry(0.05), MATS.metal); knob.position.set(0.7, 1.25, 5.85); scene.add(knob);
 
-    // Window (Rain)
-    const windowGeo = new THREE.BoxGeometry(0.1, 1.5, 2.5);
-    const windowMesh = new THREE.Mesh(windowGeo, MATS.glass);
-    windowMesh.position.set(3.95, 1.8, -1);
-    scene.add(windowMesh);
-    // Frame
-    addBox(0.1, 1.6, 0.1, MATS.wood, 3.95, 1.8, -2.25, false);
-    addBox(0.1, 1.6, 0.1, MATS.wood, 3.95, 1.8, 0.25, false);
-
-    // Door
-    const door = addBox(1.8, 2.5, 0.1, MATS.wood, 0, 1.25, 5.95);
-    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.05), MATS.metal);
-    knob.position.set(0.7, 1.25, 5.85);
-    scene.add(knob);
-
-    // --- Lighting ---
-    scene.add(new THREE.AmbientLight(0x111122, 0.5));
-    const moon = new THREE.DirectionalLight(0x4455aa, 0.3);
-    moon.position.set(-5, 5, 5);
-    scene.add(moon);
-
-    // Flashlight
-    const flashlight = new THREE.SpotLight(0xffeedd, 4, 12, Math.PI/6, 0.5, 1);
-    flashlight.castShadow = true;
-    flashlight.shadow.mapSize.width = 1024;
-    flashlight.shadow.bias = -0.001;
-    camera.add(flashlight);
-    flashlight.position.set(0.2, -0.1, 0);
-    flashlight.target.position.set(0, 0, -1);
-    camera.add(flashlight.target);
-    scene.userData.flashlight = flashlight;
-    scene.userData.tvScreen = tvScreen;
-    scene.userData.tvLight = tvLight;
-
-    // Register Interactables
-    interactables.push({ mesh: tvCase, type: 'tv' });
-    interactables.push({ mesh: door, type: 'door' });
-    interactables.push({ mesh: lampBase, type: 'lamp' });
-    
-    // Add Note on desk
-    const noteMesh = addBox(0.2, 0.01, 0.3, new THREE.MeshStandardMaterial({color:0xeeeecc}), 1.5, 0.81, -3.8, false);
-    interactables.push({ mesh: noteMesh, type: 'document', title: 'Пятно на столе', text: 'Это не чернила. Ты знаешь, что это. Ты помнишь, как пытался отмыть это в ванной, но вода была слишком холодной. <br><br>Ключ от машины был в кармане. Но машины больше нет.' });
-}
-
-createRoom();
+// Lighting
+scene.add(new THREE.AmbientLight(0x111122, 0.5));
+const moon = new THREE.DirectionalLight(0x4455aa, 0.3); moon.position.set(-5, 5, 5); scene.add(moon);
+const flashlight = new THREE.SpotLight(0xffeedd, 4, 12, Math.PI/6, 0.5, 1);
+flashlight.castShadow = true; flashlight.shadow.mapSize.width = 1024; flashlight.shadow.bias = -0.001;
+camera.add(flashlight); flashlight.position.set(0.2, -0.1, 0); flashlight.target.position.set(0, 0, -1); camera.add(flashlight.target);
 scene.add(camera);
 
+// Interactables Registration
+interactables.push({ mesh: tvCase, type: 'tv' });
+interactables.push({ mesh: door, type: 'door' });
+const noteMesh = addBox(0.2, 0.01, 0.3, new THREE.MeshStandardMaterial({color:0xeeeecc}), 1.5, 0.81, -3.8, false);
+interactables.push({ mesh: noteMesh, type: 'document', title: 'Пятно на столе', text: 'Это не чернила. Ты знаешь, что это. Ты помнишь, как пытался отмыть это в ванной, но вода была слишком холодной. <br><br>Ключ от машины был в кармане. Но машины больше нет.' });
+
 // ============================================================================
-// 6. PLAYER CONTROLS & PHYSICS
+// 4. CONTROLS
 // ============================================================================
 const keys = { w: false, a: false, s: false, d: false };
-let joyActive = false, joyId = null, joyX = 0, joyY = 0;
-let lookId = null, lastX = 0, lastY = 0;
+let joyId = null, joyX = 0, joyY = 0, lookId = null, lastX = 0, lastY = 0;
 
-// Desktop controls
 window.addEventListener('keydown', e => {
-    if(e.key === 'w' || e.key === 'W') keys.w = true;
-    if(e.key === 's' || e.key === 'S') keys.s = true;
-    if(e.key === 'a' || e.key === 'A') keys.a = true;
-    if(e.key === 'd' || e.key === 'D') keys.d = true;
-    if(e.key === 'f' || e.key === 'F') toggleLight();
-    if(e.key === 'e' || e.key === 'E') doInteract();
+    if(e.key.toLowerCase() === 'w') keys.w = true; if(e.key.toLowerCase() === 's') keys.s = true;
+    if(e.key.toLowerCase() === 'a') keys.a = true; if(e.key.toLowerCase() === 'd') keys.d = true;
+    if(e.key.toLowerCase() === 'f') toggleLight(); if(e.key.toLowerCase() === 'e') doInteract();
 });
 window.addEventListener('keyup', e => {
-    if(e.key === 'w' || e.key === 'W') keys.w = false;
-    if(e.key === 's' || e.key === 'S') keys.s = false;
-    if(e.key === 'a' || e.key === 'A') keys.a = false;
-    if(e.key === 'd' || e.key === 'D') keys.d = false;
+    if(e.key.toLowerCase() === 'w') keys.w = false; if(e.key.toLowerCase() === 's') keys.s = false;
+    if(e.key.toLowerCase() === 'a') keys.a = false; if(e.key.toLowerCase() === 'd') keys.d = false;
 });
 
-// Mobile Joystick
-const joyZone = document.getElementById('joy-zone');
-const joyKnob = document.getElementById('joy-knob');
-
-joyZone.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const t = e.changedTouches[0];
-    joyId = t.identifier;
-    joyActive = true;
-}, {passive: false});
-
+const joyZone = document.getElementById('joy-zone'), joyKnob = document.getElementById('joy-knob');
+joyZone.addEventListener('touchstart', e => { e.preventDefault(); joyId = e.changedTouches[0].identifier; }, {passive: false});
 joyZone.addEventListener('touchmove', e => {
     e.preventDefault();
-    for(let t of e.changedTouches) {
-        if(t.identifier === joyId) {
-            const rect = joyZone.getBoundingClientRect();
-            let dx = t.clientX - (rect.left + rect.width/2);
-            let dy = t.clientY - (rect.top + rect.height/2);
-            const max = rect.width/2;
-            const dist = Math.hypot(dx, dy);
-            if(dist > max) { dx = (dx/dist)*max; dy = (dy/dist)*max; }
-            joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-            joyX = dx/max;
-            joyY = dy/max;
-        }
+    for(let t of e.changedTouches) if(t.identifier === joyId) {
+        const rect = joyZone.getBoundingClientRect();
+        let dx = t.clientX - (rect.left + rect.width/2), dy = t.clientY - (rect.top + rect.height/2);
+        const max = rect.width/2, dist = Math.hypot(dx, dy);
+        if(dist > max) { dx = (dx/dist)*max; dy = (dy/dist)*max; }
+        joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+        joyX = dx/max; joyY = dy/max;
     }
 }, {passive: false});
-
 joyZone.addEventListener('touchend', e => {
-    for(let t of e.changedTouches) {
-        if(t.identifier === joyId) {
-            joyActive = false; joyId = null; joyX = 0; joyY = 0;
-            joyKnob.style.transform = `translate(0px, 0px)`;
-        }
-    }
+    for(let t of e.changedTouches) if(t.identifier === joyId) { joyId = null; joyX = 0; joyY = 0; joyKnob.style.transform = `translate(0px, 0px)`; }
 });
 
-// Mobile Look
 const lookZone = document.getElementById('look-zone');
-lookZone.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const t = e.changedTouches[0];
-    lookId = t.identifier;
-    lastX = t.clientX; lastY = t.clientY;
-}, {passive: false});
-
+lookZone.addEventListener('touchstart', e => { e.preventDefault(); lookId = e.changedTouches[0].identifier; lastX = e.changedTouches[0].clientX; lastY = e.changedTouches[0].clientY; }, {passive: false});
 lookZone.addEventListener('touchmove', e => {
     e.preventDefault();
-    for(let t of e.changedTouches) {
-        if(t.identifier === lookId) {
-            let dx = t.clientX - lastX;
-            let dy = t.clientY - lastY;
-            lastX = t.clientX; lastY = t.clientY;
-            STATE.yaw -= dx * 0.005;
-            STATE.pitch -= dy * 0.005;
-            STATE.pitch = Math.max(-Math.PI/2.2, Math.min(Math.PI/2.2, STATE.pitch));
-        }
+    for(let t of e.changedTouches) if(t.identifier === lookId) {
+        STATE.yaw -= (t.clientX - lastX) * 0.005; STATE.pitch -= (t.clientY - lastY) * 0.005;
+        STATE.pitch = Math.max(-Math.PI/2.2, Math.min(Math.PI/2.2, STATE.pitch));
+        lastX = t.clientX; lastY = t.clientY;
     }
 }, {passive: false});
-
-lookZone.addEventListener('touchend', e => {
-    for(let t of e.changedTouches) {
-        if(t.identifier === lookId) lookId = null;
-    }
-});
+lookZone.addEventListener('touchend', e => { for(let t of e.changedTouches) if(t.identifier === lookId) lookId = null; });
 
 // ============================================================================
-// 7. INTERACTION & GAME LOGIC
+// 5. INTERACTION LOGIC
 // ============================================================================
-const raycaster = new THREE.Raycaster();
-raycaster.far = 3.5;
+const raycaster = new THREE.Raycaster(); raycaster.far = 3.5;
 const center = new THREE.Vector2(0, 0);
 let activeItem = null;
+const crosshair = document.getElementById('crosshair');
+const btnInteract = document.getElementById('btn-interact');
 
 function checkInteraction() {
     if(!STATE.started || STATE.paused) return;
     raycaster.setFromCamera(center, camera);
-    const meshes = interactables.map(i => i.mesh);
-    const hits = raycaster.intersectObjects(meshes);
+    const hits = raycaster.intersectObjects(interactables.map(i => i.mesh));
 
-    if(hits.length > 0) {
+    if(hits.length > 0 && camera.position.distanceTo(hits[0].point) < 3.5) {
         const item = interactables.find(i => i.mesh === hits[0].object);
         if(item) {
-            const dist = camera.position.distanceTo(hits[0].point);
-            if(dist < 3.5) {
-                activeItem = item;
-                document.getElementById('interact-prompt').classList.add('show');
-                return;
-            }
+            activeItem = item;
+            crosshair.classList.add('interactable');
+            btnInteract.classList.add('glow');
+            return;
         }
     }
     activeItem = null;
-    document.getElementById('interact-prompt').classList.remove('show');
+    crosshair.classList.remove('interactable');
+    btnInteract.classList.remove('glow');
 }
 
 function doInteract() {
     if(!activeItem) return;
     AudioSys.click();
-
-    if(activeItem.type === 'document') {
-        showDocument(activeItem.title, activeItem.text);
-        if(activeItem.title === 'Пятно на столе') triggerSanityDrop(10);
-    } else if(activeItem.type === 'tv') {
-        showDocument('Телевизор', 'Экран мерцает. Сквозь белый шум ты слышишь голос. Это твой голос. <br><br>"Ты сам сделал это. Ты сам запер её там. Не притворяйся, что не помнишь."');
-        triggerSanityDrop(20);
-    } else if(activeItem.type === 'door') {
-        if(STATE.flags.foundKey) {
-            triggerEnding('truth');
-        } else {
-            showDocument('Дверь', 'Заперто. Ключ остался снаружи. Нужно найти запасной. Возможно, он в ванной.');
-        }
-    } else if(activeItem.type === 'lamp') {
-        AudioSys.click();
-        const light = scene.children.find(c => c.isPointLight && c.position.x === -0.8);
-        if(light) light.visible = !light.visible;
+    if(activeItem.type === 'document') { showDocument(activeItem.title, activeItem.text); if(activeItem.title === 'Пятно на столе') triggerSanityDrop(15); }
+    else if(activeItem.type === 'tv') { showDocument('Телевизор', 'Экран мерцает. Сквозь белый шум ты слышишь голос. Это твой голос. <br><br>"Ты сам сделал это. Ты сам запер её там. Не притворяйся, что не помнишь."'); triggerSanityDrop(20); }
+    else if(activeItem.type === 'door') {
+        if(STATE.flags.foundKey) triggerEnding();
+        else showDocument('Дверь', 'Заперто. Ключ остался снаружи. Нужно найти запасной. Возможно, он в ванной.');
     }
 }
 
 // ============================================================================
-// 8. UI FUNCTIONS
+// 6. UI & GAME STATE
 // ============================================================================
 function showDocument(title, text) {
     STATE.paused = true;
     document.getElementById('doc-content').innerHTML = `<h2>${title}</h2><p>${text}</p>`;
     document.getElementById('modal-doc').classList.add('active');
 }
-
-document.getElementById('btn-close-doc').addEventListener('click', () => {
-    document.getElementById('modal-doc').classList.remove('active');
-    STATE.paused = false;
-});
+document.getElementById('btn-close-doc').addEventListener('click', () => { document.getElementById('modal-doc').classList.remove('active'); STATE.paused = false; });
 
 function triggerSanityDrop(amount) {
     STATE.sanity -= amount;
-    if(STATE.sanity < 0) STATE.sanity = 0;
-    
-    // Apply visual effect based on sanity
     document.getElementById('sanity-effect').style.opacity = (100 - STATE.sanity) / 100;
     AudioSys.playTone(100, 'sawtooth', 2, 0.2);
-
     if(STATE.sanity <= 50 && !STATE.flags.reflectionTriggered) {
         STATE.flags.reflectionTriggered = true;
-        // "Reflection" effect: Room changes
         setTimeout(() => {
-            showDialog('Система', 'Голова раскалывается. Ты смотришь на кровать. Там кто-то сидит. Ты моргаешь — никого нет. Но кровать смята. Это не твое воображение.', [
-                { text: 'Найти выход (нужен ключ)', action: () => { STATE.flags.foundKey = true; STATE.inventory.push({name: 'Ржавый ключ', desc: 'Найден в ванной'}); } }
+            showDialog('Голос в голове', 'Ты смотришь на кровать. Там кто-то сидит. Ты моргаешь — никого нет. Но кровать смята. Ключ от номера теперь у тебя в кармане.', [
+                { text: 'Взять ключ', action: () => { STATE.flags.foundKey = true; STATE.inventory.push({name: 'Ржавый ключ 07', desc: 'Найден в ванной'}); } }
             ]);
-            // Change TV color
-            scene.userData.tvScreen.material.emissive.setHex(0xff0000);
             scene.userData.tvLight.color.setHex(0xff0000);
+            tvScreen.material.emissive.setHex(0xff0000);
         }, 2000);
     }
 }
 
-function triggerEnding(type) {
+function triggerEnding() {
     STATE.started = false;
     document.getElementById('hud').classList.remove('active');
+    document.getElementById('modal-doc').classList.remove('active');
     document.getElementById('end-screen').style.display = 'flex';
-    
-    if(type === 'truth') {
-        document.getElementById('end-title').innerText = 'ПРАВДА';
-        document.getElementById('end-text').innerText = 'Ты открываешь дверь. В коридоре темно. Ты уходишь, зная, что сделал. Полиция найдет тело в ванной. Тебя найдут через три дня на заброшенной заправке. Ты оставишь предсмертную записку, в которой не будет ни слова правды.';
-    } else {
-        document.getElementById('end-title').innerText = 'ТРАГЕДИЯ';
-        document.getElementById('end-text').innerText = 'Ты остаешься в номере. Звонки прекращаются. Свет гаснет. Ты смотришь в зеркало, но видишь не себя. Мотель поглощает тебя.';
-    }
 }
 
 function showDialog(speaker, text, choices) {
     STATE.paused = true;
     document.getElementById('dlg-speaker').innerText = speaker;
     document.getElementById('dlg-text').innerHTML = text;
-    const c = document.getElementById('dlg-choices');
-    c.innerHTML = '';
+    const c = document.getElementById('dlg-choices'); c.innerHTML = '';
     choices.forEach(ch => {
-        const b = document.createElement('button');
-        b.className = 'choice-btn';
-        b.innerText = ch.text;
-        b.onclick = () => {
-            document.getElementById('modal-dialogue').classList.remove('active');
-            if(ch.action) ch.action();
-            STATE.paused = false;
-        };
+        const b = document.createElement('button'); b.className = 'choice-btn'; b.innerText = ch.text;
+        b.onclick = () => { document.getElementById('modal-dialogue').classList.remove('active'); if(ch.action) ch.action(); STATE.paused = false; };
         c.appendChild(b);
     });
     document.getElementById('modal-dialogue').classList.add('active');
 }
 
-// Buttons
+// Buttons Hookup
 document.getElementById('btn-interact').addEventListener('touchstart', e => { e.preventDefault(); doInteract(); });
-document.getElementById('btn-flashlight').addEventListener('touchstart', e => { 
-    e.preventDefault(); 
-    toggleLight(); 
+document.getElementById('btn-flashlight').addEventListener('touchstart', e => { e.preventDefault(); toggleLight(); });
+document.getElementById('btn-inventory').addEventListener('touchstart', e => {
+    e.preventDefault(); STATE.paused = true;
+    const list = document.getElementById('inv-list'); list.innerHTML = '';
+    if(STATE.inventory.length === 0) list.innerHTML = '<div style="color:#555">Пусто</div>';
+    else STATE.inventory.forEach(i => list.innerHTML += `<div class="choice-btn" style="cursor:default; border-color:#333;"><b>${i.name}</b><br><small style="color:#666">${i.desc}</small></div>`);
+    document.getElementById('modal-inventory').classList.add('active');
 });
+document.getElementById('btn-close-inv').addEventListener('click', () => { document.getElementById('modal-inventory').classList.remove('active'); STATE.paused = false; });
 
 function toggleLight() {
-    const fl = scene.userData.flashlight;
-    fl.visible = !fl.visible;
-    document.getElementById('btn-flashlight').classList.toggle('active', fl.visible);
+    flashlight.visible = !flashlight.visible;
+    document.getElementById('btn-flashlight').classList.toggle('active', flashlight.visible);
     AudioSys.click();
 }
 
-document.getElementById('btn-inventory').addEventListener('touchstart', e => {
-    e.preventDefault();
-    STATE.paused = true;
-    const grid = document.getElementById('inv-grid');
-    grid.innerHTML = '';
-    if(STATE.inventory.length === 0) grid.innerHTML = '<div style="color:#555">Пусто</div>';
-    else {
-        STATE.inventory.forEach(i => {
-            grid.innerHTML += `<div class="inv-item"><div class="inv-item-name">${i.name}</div><div class="inv-item-desc">${i.desc}</div></div>`;
-        });
-    }
-    document.getElementById('modal-inventory').classList.add('active');
-});
-
-document.getElementById('btn-close-inv').addEventListener('click', () => {
-    document.getElementById('modal-inventory').classList.remove('active');
-    STATE.paused = false;
-});
-
 // ============================================================================
-// 9. MAIN LOOP
+// 7. MAIN LOOP
 // ============================================================================
-let lastTime = performance.now();
-let stepTimer = 0;
-let bobTime = 0;
+let lastTime = performance.now(), stepTimer = 0, bobTime = 0;
 
 function animate() {
     requestAnimationFrame(animate);
-    const now = performance.now();
-    const dt = Math.min((now - lastTime) / 1000, 0.1);
+    const now = performance.now(), dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
 
     if(STATE.started && !STATE.paused) {
-        // Movement
         let moveX = (keys.d?1:0) - (keys.a?1:0) + joyX;
         let moveZ = (keys.s?1:0) - (keys.w?1:0) + joyY;
         const len = Math.hypot(moveX, moveZ);
@@ -801,86 +505,50 @@ function animate() {
         const speed = 3.0 * dt;
         const forward = new THREE.Vector3(-Math.sin(STATE.yaw), 0, -Math.cos(STATE.yaw));
         const right = new THREE.Vector3(Math.cos(STATE.yaw), 0, -Math.sin(STATE.yaw));
-
-        const velocity = new THREE.Vector3()
-            .addScaledVector(forward, -moveZ * speed)
-            .addScaledVector(right, moveX * speed);
-
+        const velocity = new THREE.Vector3().addScaledVector(forward, -moveZ * speed).addScaledVector(right, moveX * speed);
         const newPos = camera.position.clone().add(velocity);
         
-        // Collision Check (AABB)
-        const pBox = new THREE.Box3().setFromCenterAndSize(
-            new THREE.Vector3(newPos.x, 1.0, newPos.z),
-            new THREE.Vector3(0.6, 2.0, 0.6)
-        );
-        
+        const pBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(newPos.x, 1.0, newPos.z), new THREE.Vector3(0.6, 2.0, 0.6));
         let collided = false;
-        for(let box of colliders) {
-            if(pBox.intersectsBox(box)) { collided = true; break; }
-        }
+        for(let box of colliders) if(pBox.intersectsBox(box)) { collided = true; break; }
 
         if(!collided) {
-            camera.position.x = newPos.x;
-            camera.position.z = newPos.z;
-            
-            // Head Bobbing
-            if(len > 0.1) {
-                bobTime += dt * 12;
-                stepTimer -= dt;
-                if(stepTimer <= 0) { AudioSys.footstep(); stepTimer = 0.4; }
-            }
+            camera.position.x = newPos.x; camera.position.z = newPos.z;
+            if(len > 0.1) { bobTime += dt * 12; stepTimer -= dt; if(stepTimer <= 0) { AudioSys.footstep(); stepTimer = 0.4; } }
         }
 
-        // Apply Camera
         camera.position.y = 1.6 + Math.sin(bobTime) * 0.03;
-        camera.rotation.set(0, 0, 0);
-        camera.rotateY(STATE.yaw);
-        camera.rotateX(STATE.pitch);
+        camera.rotation.set(0, 0, 0); camera.rotateY(STATE.yaw); camera.rotateX(STATE.pitch);
 
         checkInteraction();
 
-        // TV Static effect
-        if(Math.random() > 0.95) {
-            const tv = scene.userData.tvScreen;
-            tv.material.emissiveIntensity = Math.random() * 2;
-            scene.userData.tvLight.intensity = Math.random() * 2;
-        }
+        if(Math.random() > 0.95) { tvScreen.material.emissiveIntensity = Math.random() * 2; tvLight.intensity = Math.random() * 2; }
     }
-
     composer.render();
 }
 
 // ============================================================================
-// 10. INITIALIZATION
+// 8. INIT
 // ============================================================================
 document.getElementById('btn-start').addEventListener('click', () => {
     AudioSys.init();
-    const bar = document.getElementById('loading-bar');
-    bar.style.width = '100%';
-    
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('hud').classList.add('active');
+    STATE.started = true;
     setTimeout(() => {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('hud').classList.add('active');
-        STATE.started = true;
-        
-        // Initial Game Event
+        AudioSys.phone();
         setTimeout(() => {
-            AudioSys.phoneRing();
-            setTimeout(() => {
-                showDialog('Телефон в номере', 'Ты поднимаешь трубку. Слышен только дождь и тяжелое дыхание. <br><br>"Ванная. Посмотри в ванной."', [
-                    { text: 'Проверить ванную', action: () => { STATE.flags.openedBathroom = true; } },
-                    { text: 'Бросить трубку', action: () => { triggerSanityDrop(5); } }
-                ]);
-            }, 3000);
-        }, 1000);
+            showDialog('Телефон', 'Ты поднимаешь трубку. Слышен только дождь и тяжелое дыхание. <br><br>"Ванная. Посмотри в ванной."', [
+                { text: 'Проверить ванную', action: () => { triggerSanityDrop(10); } },
+                { text: 'Бросить трубку', action: () => { triggerSanityDrop(5); } }
+            ]);
+        }, 3000);
     }, 1000);
 });
 
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    composer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight); composer.setSize(window.innerWidth, window.innerHeight);
 });
 
 animate();
