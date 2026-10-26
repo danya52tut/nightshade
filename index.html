@@ -24,34 +24,37 @@ h1{font-size:clamp(65px,15vw,120px);line-height:.76;letter-spacing:-.075em;margi
 h1 span{display:block;color:#a72b3b}
 .tagline{font:italic clamp(17px,3.5vw,24px)/1.5 Georgia,serif;color:#c8bdb4;margin:30px 0}
 .rule{height:1px;background:linear-gradient(90deg,#a72b3b,transparent);margin:25px 0 35px}
-.primary{background:#a72b3b;border:0;padding:20px 28px;min-width:250px;letter-spacing:.2em;text-transform:uppercase;font-size:12px;transition:background .2s}
+.primary{background:#a72b3b;border:0;padding:18px 24px;min-width:220px;letter-spacing:.2em;text-transform:uppercase;font-size:12px;transition:background .2s}
 .primary:active{background:#ce3b4e;transform:scale(.98)}
 .primary:hover{background:#c23348}
 .foot{font-size:10px;letter-spacing:.17em;line-height:2;color:#807872;margin-top:38px}
 #hud{display:none;position:absolute;inset:0;z-index:2;pointer-events:none}
-#top{position:absolute;top:max(20px,env(safe-area-inset-top));left:18px;right:18px;display:flex;justify-content:space-between;gap:15px;text-shadow:0 2px 10px #000}
+#top{position:absolute;top:max(16px,env(safe-area-inset-top));left:14px;right:14px;display:flex;justify-content:space-between;gap:12px;text-shadow:0 2px 10px #000}
 #chapter{font-size:10px;letter-spacing:.22em;color:#c1b2a8}
-#objective{font-size:13px;margin-top:10px;max-width:280px;line-height:1.5}
-#inventory{text-align:right;font-size:10px;letter-spacing:.1em;line-height:1.8}
+#objective{font-size:13px;margin-top:8px;max-width:260px;line-height:1.45}
+#inventory{text-align:right;font-size:10px;letter-spacing:.1em;line-height:1.7}
 #crosshair{position:absolute;left:50%;top:50%;width:5px;height:5px;background:#eee;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 8px #fff;opacity:.7}
 #prompt{position:absolute;top:calc(50% + 28px);left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.14em;white-space:nowrap;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .25s;background:#0008;padding:6px 12px;border-radius:4px}
-#subtitle{position:absolute;bottom:19%;left:8%;right:8%;text-align:center;font:italic clamp(17px,4vw,23px)/1.5 Georgia,serif;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .5s;pointer-events:none}
+#subtitle{position:absolute;bottom:17%;left:6%;right:6%;text-align:center;font:italic clamp(16px,3.8vw,22px)/1.45 Georgia,serif;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .5s;pointer-events:none}
 #controls{display:none;position:absolute;inset:0;z-index:3;pointer-events:none}
-#joy{position:absolute;left:22px;bottom:max(28px,env(safe-area-inset-bottom));width:112px;height:112px;border:1px solid #ffffff35;border-radius:50%;background:#1115;pointer-events:auto}
-#stick{position:absolute;left:50%;top:50%;width:42px;height:42px;transform:translate(-50%,-50%);border:1px solid #ffffff66;border-radius:50%;background:#aaa3;transition:none}
-.act{position:absolute;right:20px;width:65px;height:65px;border:1px solid #ffffff40;border-radius:50%;background:#080808b8;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;pointer-events:auto;color:#ddd}
+#joy{position:absolute;left:18px;bottom:max(24px,env(safe-area-inset-bottom));width:104px;height:104px;border:1px solid #ffffff35;border-radius:50%;background:#1115;pointer-events:auto}
+#stick{position:absolute;left:50%;top:50%;width:40px;height:40px;transform:translate(-50%,-50%);border:1px solid #ffffff66;border-radius:50%;background:#aaa3;transition:none}
+.act{position:absolute;right:16px;width:60px;height:60px;border:1px solid #ffffff40;border-radius:50%;background:#080808b8;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;pointer-events:auto;color:#ddd}
 .act small{font-size:8px;letter-spacing:.1em}
-#use{bottom:max(158px,calc(env(safe-area-inset-bottom)+158px))}
-#torch{bottom:max(82px,calc(env(safe-area-inset-bottom)+82px))}
+#use{bottom:max(148px,calc(env(safe-area-inset-bottom)+148px))}
+#torch{bottom:max(78px,calc(env(safe-area-inset-bottom)+78px))}
 #run{bottom:max(8px,env(safe-area-inset-bottom))}
-#dialog{display:none;position:absolute;z-index:8;inset:0;background:#000d;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px}
-.card{width:min(500px,100%);padding:28px;background:#101010;border:1px solid #ffffff22;box-shadow:0 20px 80px #000}
-.label{font-size:10px;letter-spacing:.3em;color:#b52d3d;margin-bottom:20px}
-#dtitle{font:normal 28px Georgia,serif;margin:0 0 20px}
-#dtext{font:16px/1.8 Georgia,serif;color:#c9bdb2;white-space:pre-line}
-#next{width:100%;margin-top:26px}
-#pause{display:none;position:absolute;z-index:7;right:15px;top:max(15px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:10px 14px;font-size:16px;color:#ccc;border-radius:4px;pointer-events:auto}
-#fs-btn{position:absolute;z-index:7;right:70px;top:max(15px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:10px 14px;font-size:16px;color:#ccc;border-radius:4px;pointer-events:auto;display:none}
+#dialog{display:none;position:absolute;z-index:8;inset:0;background:#000c;backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;overflow:hidden}
+.card{width:min(480px,100%);max-height:min(85vh,620px);display:flex;flex-direction:column;background:#101010;border:1px solid #ffffff22;box-shadow:0 20px 80px #000;border-radius:6px;overflow:hidden}
+.card-header{padding:22px 22px 0;flex-shrink:0}
+.label{font-size:10px;letter-spacing:.3em;color:#b52d3d;margin-bottom:14px}
+#dtitle{font:normal 24px Georgia,serif;margin:0 0 14px}
+.card-body{padding:0 22px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0}
+#dtext{font:15px/1.7 Georgia,serif;color:#c9bdb2;white-space:pre-line;padding-bottom:8px}
+.card-footer{padding:16px 22px 20px;flex-shrink:0;border-top:1px solid #ffffff12}
+#next{width:100%}
+#pause{display:none;position:absolute;z-index:7;right:12px;top:max(12px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:9px 12px;font-size:15px;color:#ccc;border-radius:4px;pointer-events:auto}
+#fs-btn{position:absolute;z-index:7;right:58px;top:max(12px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:9px 12px;font-size:15px;color:#ccc;border-radius:4px;pointer-events:auto;display:none}
 #flash{position:absolute;inset:0;pointer-events:none;background:#9000;z-index:4;opacity:0;transition:opacity .15s}
 #err{display:none;position:absolute;z-index:20;bottom:10px;left:10px;right:10px;background:#300d12;border:1px solid #a72b3b;padding:14px;font-size:12px;overflow-wrap:anywhere;border-radius:4px}
 #loading{position:absolute;inset:0;z-index:30;background:#050505;display:flex;align-items:center;justify-content:center}
@@ -61,13 +64,19 @@ h1 span{display:block;color:#a72b3b}
 #load-progress{height:100%;width:0%;background:linear-gradient(90deg,#a72b3b,#ce3b4e);transition:width .3s}
 #load-text{font-size:11px;letter-spacing:.15em;color:#807872}
 @media(orientation:landscape) and (max-height:500px){
-  h1{font-size:65px}
-  .tagline{font-size:16px;margin:14px 0}
-  .rule{margin:12px 0 18px}
-  .foot{margin-top:12px}
-  #joy{width:85px;height:85px}
-  #use{bottom:105px}
-  #torch{bottom:55px}
+  h1{font-size:58px}
+  .tagline{font-size:15px;margin:12px 0}
+  .rule{margin:10px 0 16px}
+  .foot{margin-top:10px}
+  #joy{width:80px;height:80px}
+  #use{bottom:100px}
+  #torch{bottom:52px}
+  .card{max-height:92vh}
+  .card-header{padding:14px 16px 0}
+  #dtitle{font-size:20px;margin-bottom:10px}
+  .card-body{padding:0 16px}
+  #dtext{font-size:14px;line-height:1.55}
+  .card-footer{padding:12px 16px 14px}
 }
 #rotate-msg{display:none;position:fixed;inset:0;z-index:9999;background:#050505;color:#e9dfd5;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Georgia,serif}
 #rotate-msg .icon{font-size:64px;margin-bottom:24px;animation:spin 2.5s ease-in-out infinite}
@@ -132,10 +141,16 @@ h1 span{display:block;color:#a72b3b}
   <button id="fs-btn" title="Полный экран">⛶</button>
   <div id="dialog">
     <div class="card">
-      <div class="label">NIGHTSHADE · АРХИВ</div>
-      <h2 id="dtitle">Прибытие</h2>
-      <div id="dtext"></div>
-      <button class="primary" id="next">Продолжить</button>
+      <div class="card-header">
+        <div class="label">NIGHTSHADE · АРХИВ</div>
+        <h2 id="dtitle">Прибытие</h2>
+      </div>
+      <div class="card-body">
+        <div id="dtext"></div>
+      </div>
+      <div class="card-footer">
+        <button class="primary" id="next">Продолжить</button>
+      </div>
     </div>
   </div>
   <div id="flash"></div>
@@ -389,687 +404,4 @@ function buildReception() {
 
 function buildCorridor() {
   const floor = createBox(3.6, 0.05, 14, mats.carpet);
-  floor.position.set(0, 0.025, -8);
-  scene.add(floor);
-
-  const wallL = createBox(0.25, 3.2, 14, mats.wall);
-  wallL.position.set(-1.9, 1.6, -8);
-  scene.add(wallL);
-  const wallR = createBox(0.25, 3.2, 14, mats.wall);
-  wallR.position.set(1.9, 1.6, -8);
-  scene.add(wallR);
-
-  const ceiling = createBox(3.8, 0.2, 14, mats.wallDark);
-  ceiling.position.set(0, 3.25, -8);
-  scene.add(ceiling);
-
-  [-4.5, -7.5, -10.5, -13.5].forEach(z => {
-    const door = createBox(0.9, 2.15, 0.08, mats.door);
-    door.position.set(-1.75, 1.1, z);
-    scene.add(door);
-    const plate = createBox(0.22, 0.12, 0.02, mats.metal);
-    plate.position.set(-1.7, 2.0, z);
-    scene.add(plate);
-  });
-
-  door09 = createBox(0.95, 2.2, 0.1, mats.door);
-  door09.position.set(-1.75, 1.12, -14.2);
-  scene.add(door09);
-
-  const plate09 = createBox(0.28, 0.16, 0.03, mats.metal);
-  plate09.position.set(-1.68, 2.15, -14.2);
-  scene.add(plate09);
-
-  for (let i = 0; i < 4; i++) {
-    const z = -3.5 - i * 3.2;
-    const fixture = createBox(0.5, 0.08, 0.2, mats.metalDark);
-    fixture.position.set(0, 3.12, z);
-    scene.add(fixture);
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), mats.emissiveWarm);
-    bulb.position.set(0, 3.05, z);
-    scene.add(bulb);
-    const light = new THREE.PointLight(0xffc070, 0.9, 6.5, 1.8);
-    light.position.set(0, 3.0, z);
-    light.castShadow = false;
-    light.userData.baseIntensity = 0.9;
-    light.userData.flicker = Math.random() > 0.6;
-    scene.add(light);
-  }
-
-  const endWall = createBox(3.8, 3.2, 0.3, mats.wallDark);
-  endWall.position.set(0, 1.6, -16.5);
-  scene.add(endWall);
-}
-
-function buildRoom09() {
-  roomGroup = new THREE.Group();
-  roomGroup.visible = false;
-
-  const floor = createBox(4.2, 0.05, 5.2, mats.carpet);
-  floor.position.set(-3.8, 0.025, -14.5);
-  roomGroup.add(floor);
-
-  const backW = createBox(4.2, 3.0, 0.2, mats.wall);
-  backW.position.set(-3.8, 1.5, -17.0);
-  roomGroup.add(backW);
-  const leftW = createBox(0.2, 3.0, 5.2, mats.wall);
-  leftW.position.set(-5.9, 1.5, -14.5);
-  roomGroup.add(leftW);
-  const rightW = createBox(0.2, 3.0, 5.0, mats.wall);
-  rightW.position.set(-1.7, 1.5, -14.6);
-  roomGroup.add(rightW);
-
-  const ceil = createBox(4.4, 0.15, 5.4, mats.wallDark);
-  ceil.position.set(-3.8, 3.05, -14.5);
-  roomGroup.add(ceil);
-
-  const bedFrame = createBox(1.6, 0.4, 2.2, mats.woodDark);
-  bedFrame.position.set(-4.6, 0.25, -15.8);
-  roomGroup.add(bedFrame);
-  const mattress = createBox(1.5, 0.25, 2.1, mats.carpet);
-  mattress.position.set(-4.6, 0.55, -15.8);
-  roomGroup.add(mattress);
-  const pillow = createBox(0.55, 0.12, 0.4, new THREE.MeshStandardMaterial({ color: 0x8a7a6a, roughness: 0.9 }));
-  pillow.position.set(-4.6, 0.72, -16.55);
-  roomGroup.add(pillow);
-
-  const stand = createBox(0.5, 0.55, 0.45, mats.wood);
-  stand.position.set(-3.4, 0.3, -16.5);
-  roomGroup.add(stand);
-
-  const photoFrame = createBox(0.22, 0.28, 0.03, mats.woodDark);
-  photoFrame.position.set(-3.4, 0.75, -16.45);
-  roomGroup.add(photoFrame);
-  const photo = createBox(0.18, 0.22, 0.01, mats.paper);
-  photo.position.set(-3.4, 0.75, -16.43);
-  roomGroup.add(photo);
-
-  const rLamp = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.2, 10), mats.emissiveWarm);
-  rLamp.position.set(-3.55, 0.85, -16.35);
-  roomGroup.add(rLamp);
-  const roomLight = new THREE.PointLight(0xffb870, 0.7, 5, 1.5);
-  roomLight.position.set(-3.55, 0.9, -16.35);
-  roomGroup.add(roomLight);
-
-  const closet = createBox(1.1, 2.3, 0.6, mats.woodDark);
-  closet.position.set(-5.2, 1.15, -13.0);
-  roomGroup.add(closet);
-
-  const table = createBox(0.8, 0.05, 0.6, mats.wood);
-  table.position.set(-2.6, 0.75, -13.5);
-  roomGroup.add(table);
-  const leg1 = createBox(0.06, 0.7, 0.06, mats.woodDark);
-  leg1.position.set(-2.9, 0.35, -13.7);
-  roomGroup.add(leg1);
-  const leg2 = createBox(0.06, 0.7, 0.06, mats.woodDark);
-  leg2.position.set(-2.3, 0.35, -13.3);
-  roomGroup.add(leg2);
-
-  scene.add(roomGroup);
-}
-
-function createRain() {
-  const count = isMobile ? 600 : 1400;
-  const geo = new THREE.BufferGeometry();
-  const positions = new Float32Array(count * 3);
-  const velocities = new Float32Array(count);
-  for (let i = 0; i < count; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 30;
-    positions[i * 3 + 1] = Math.random() * 12;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
-    velocities[i] = 8 + Math.random() * 6;
-  }
-  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geo.userData.velocities = velocities;
-  const mat = new THREE.PointsMaterial({
-    color: 0x8da0b0, size: 0.04, transparent: true, opacity: 0.35, depthWrite: false
-  });
-  rainParticles = new THREE.Points(geo, mat);
-  scene.add(rainParticles);
-}
-
-function createSilhouette() {
-  silhouette = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 1.1, 4, 8), mats.black);
-  body.position.y = 0.9;
-  silhouette.add(body);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 10), mats.black);
-  head.position.y = 1.75;
-  silhouette.add(head);
-  silhouette.position.set(0, 0, -15.5);
-  silhouette.visible = false;
-  scene.add(silhouette);
-}
-
-function registerInteractables() {
-  interactables.push({ id: 'key', position: new THREE.Vector3(0.6, 1.14, 1.75), radius: 1.6, label: 'ВЗЯТЬ КЛЮЧ', type: 'key', done: false });
-  interactables.push({ id: 'note', position: new THREE.Vector3(-0.5, 1.13, 1.7), radius: 1.5, label: 'ПРОЧИТАТЬ ЗАПИСКУ', type: 'note', done: false });
-  interactables.push({ id: 'phone', position: new THREE.Vector3(-1.1, 1.16, 1.65), radius: 1.5, label: 'ПРОВЕРИТЬ ТЕЛЕФОН', type: 'phone', done: false });
-  interactables.push({ id: 'door09', position: new THREE.Vector3(-1.6, 1.1, -14.2), radius: 1.8, label: 'ОТКРЫТЬ НОМЕР 09', type: 'door', done: false });
-  interactables.push({ id: 'bedphoto', position: new THREE.Vector3(-3.4, 0.75, -16.45), radius: 1.6, label: 'ОСМОТРЕТЬ ФОТОГРАФИЮ', type: 'bedphoto', done: false });
-}
-
-function setupLighting() {
-  scene.add(new THREE.AmbientLight(0x304050, 0.15));
-  scene.add(new THREE.HemisphereLight(0x203040, 0x1a1008, 0.25));
-  const dir = new THREE.DirectionalLight(0x667788, 0.2);
-  dir.position.set(5, 12, 8);
-  scene.add(dir);
-}
-
-function setupControls() {
-  if (!isMobile) {
-    controls = new PointerLockControls(camera, document.body);
-    scene.add(controls.getObject());
-    document.addEventListener('click', () => {
-      if (state.started && !state.paused && !controls.isLocked) controls.lock();
-    });
-  }
-  document.addEventListener('keydown', onKeyDown);
-  document.addEventListener('keyup', onKeyUp);
-  setupMobileControls();
-}
-
-function onKeyDown(e) {
-  switch (e.code) {
-    case 'KeyW': case 'ArrowUp': moveForward = true; break;
-    case 'KeyS': case 'ArrowDown': moveBackward = true; break;
-    case 'KeyA': case 'ArrowLeft': moveLeft = true; break;
-    case 'KeyD': case 'ArrowRight': moveRight = true; break;
-    case 'ShiftLeft': case 'ShiftRight': running = true; break;
-    case 'KeyE': interact(); break;
-    case 'KeyF': toggleFlashlight(); break;
-    case 'Escape':
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      } else if (state.started) {
-        if (ui.dialog.style.display === 'flex') closeDialog();
-        else togglePause();
-      }
-      break;
-    case 'KeyF11':
-      e.preventDefault();
-      toggleFullscreen();
-      break;
-  }
-}
-
-function onKeyUp(e) {
-  switch (e.code) {
-    case 'KeyW': case 'ArrowUp': moveForward = false; break;
-    case 'KeyS': case 'ArrowDown': moveBackward = false; break;
-    case 'KeyA': case 'ArrowLeft': moveLeft = false; break;
-    case 'KeyD': case 'ArrowRight': moveRight = false; break;
-    case 'ShiftLeft': case 'ShiftRight': running = false; break;
-  }
-}
-
-function setupMobileControls() {
-  const joy = $('joy');
-  const stick = $('stick');
-  joy.addEventListener('pointerdown', e => {
-    joyId = e.pointerId;
-    joy.setPointerCapture(e.pointerId);
-    joyMove(e);
-  });
-  joy.addEventListener('pointermove', e => { if (e.pointerId === joyId) joyMove(e); });
-  const joyRelease = e => {
-    if (e.pointerId === joyId) {
-      joyId = null; jx = 0; jy = 0;
-      stick.style.left = '50%'; stick.style.top = '50%';
-    }
-  };
-  joy.addEventListener('pointerup', joyRelease);
-  joy.addEventListener('pointercancel', joyRelease);
-
-  function joyMove(e) {
-    const r = joy.getBoundingClientRect();
-    let dx = e.clientX - (r.left + r.width / 2);
-    let dy = e.clientY - (r.top + r.height / 2);
-    const max = r.width * 0.36;
-    const d = Math.hypot(dx, dy);
-    if (d > max) { dx = dx / d * max; dy = dy / d * max; }
-    jx = dx / max; jy = dy / max;
-    stick.style.left = `calc(50% + ${dx}px)`;
-    stick.style.top = `calc(50% + ${dy}px)`;
-  }
-
-  const canvas = $('screen');
-  canvas.addEventListener('pointerdown', e => {
-    if (!state.started || state.paused) return;
-    if (e.clientX > window.innerWidth * 0.35) {
-      lookId = e.pointerId;
-      lastLookX = e.clientX;
-      lastLookY = e.clientY;
-    }
-  });
-  canvas.addEventListener('pointermove', e => {
-    if (e.pointerId === lookId && isMobile) {
-      const dx = e.clientX - lastLookX;
-      const dy = e.clientY - lastLookY;
-      lastLookX = e.clientX;
-      lastLookY = e.clientY;
-      const euler = new THREE.Euler(0, 0, 0, 'YXZ');
-      euler.setFromQuaternion(camera.quaternion);
-      euler.y -= dx * touchLookSensitivity * 1.5;
-      euler.x -= dy * touchLookSensitivity * 1.2;
-      euler.x = Math.max(-1.1, Math.min(1.1, euler.x));
-      camera.quaternion.setFromEuler(euler);
-    }
-  });
-  canvas.addEventListener('pointerup', e => { if (e.pointerId === lookId) lookId = null; });
-  canvas.addEventListener('pointercancel', e => { if (e.pointerId === lookId) lookId = null; });
-
-  $('use').addEventListener('pointerdown', e => { e.preventDefault(); interact(); });
-  $('torch').addEventListener('pointerdown', e => { e.preventDefault(); toggleFlashlight(); });
-  $('run').addEventListener('pointerdown', e => { e.preventDefault(); running = true; });
-  $('run').addEventListener('pointerup', () => running = false);
-  $('run').addEventListener('pointercancel', () => running = false);
-}
-
-function startAudio() {
-  try {
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
-    audioCtx = new AC();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.35;
-    masterGain.connect(audioCtx.destination);
-
-    const ambientOsc = audioCtx.createOscillator();
-    const ambGain = audioCtx.createGain();
-    ambientOsc.type = 'sine';
-    ambientOsc.frequency.value = 42;
-    ambGain.gain.value = 0.08;
-    ambientOsc.connect(ambGain);
-    ambGain.connect(masterGain);
-    ambientOsc.start();
-
-    const bufferSize = 2 * audioCtx.sampleRate;
-    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.15;
-    const noise = audioCtx.createBufferSource();
-    noise.buffer = buffer;
-    noise.loop = true;
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 900;
-    filter.Q.value = 0.6;
-    const rainGain = audioCtx.createGain();
-    rainGain.gain.value = 0.18;
-    noise.connect(filter);
-    filter.connect(rainGain);
-    rainGain.connect(masterGain);
-    noise.start();
-  } catch (e) {
-    console.warn('Audio init failed', e);
-  }
-}
-
-function playTone(freq = 150, dur = 0.3, vol = 0.06) {
-  if (!audioCtx || !masterGain) return;
-  try {
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = 'sine';
-    o.frequency.value = freq;
-    g.gain.value = vol;
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-    o.connect(g);
-    g.connect(masterGain);
-    o.start();
-    o.stop(audioCtx.currentTime + dur);
-  } catch (e) {}
-}
-
-function setupUI() {
-  ui.start.addEventListener('click', startGame);
-  ui.next.addEventListener('click', closeDialog);
-  ui.pause.addEventListener('click', () => {
-    if (!state.started) return;
-    if (ui.dialog.style.display === 'flex') closeDialog();
-    else togglePause();
-  });
-  ui.fsBtn.addEventListener('click', toggleFullscreen);
-
-  document.addEventListener('fullscreenchange', () => {
-    ui.fsBtn.textContent = document.fullscreenElement ? '⛶' : '⛶';
-  });
-}
-
-function requestFullscreen() {
-  const el = document.documentElement;
-  if (el.requestFullscreen) {
-    el.requestFullscreen().catch(() => {});
-  } else if (el.webkitRequestFullscreen) {
-    el.webkitRequestFullscreen();
-  } else if (el.msRequestFullscreen) {
-    el.msRequestFullscreen();
-  }
-}
-
-function exitFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen().catch(() => {});
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen();
-  }
-}
-
-function toggleFullscreen() {
-  if (document.fullscreenElement || document.webkitFullscreenElement) {
-    exitFullscreen();
-  } else {
-    requestFullscreen();
-  }
-}
-
-function startGame() {
-  if (state.started) return;
-  state.started = true;
-  state.paused = true;
-  ui.menu.style.display = 'none';
-  ui.hud.style.display = 'block';
-  ui.controls.style.display = isMobile ? 'block' : 'none';
-  ui.pause.style.display = 'block';
-  ui.fsBtn.style.display = 'block';
-  startAudio();
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-
-  // Сразу пытаемся уйти в полный экран
-  requestFullscreen();
-
-  dialog(
-    'Прибытие',
-    'Дождь не прекращается уже несколько часов.\n\nНавигатор привёл тебя к мотелю, которого нет на карте.\n\nНа стойке регистрации горит лампа. За ней никого нет.\n\nВ книге постояльцев последняя запись сделана твоим почерком.\n\nДата — завтрашняя.'
-  );
-}
-
-function dialog(title, body) {
-  ui.dtitle.textContent = title;
-  ui.dtext.textContent = body;
-  ui.dialog.style.display = 'flex';
-  state.paused = true;
-  if (controls && controls.isLocked) controls.unlock();
-}
-
-function closeDialog() {
-  ui.dialog.style.display = 'none';
-  state.paused = false;
-  // На десктопе после закрытия диалога сразу предлагаем захватить мышь
-  if (!isMobile && controls && !controls.isLocked) {
-    setTimeout(() => {
-      try { controls.lock(); } catch(e) {}
-    }, 100);
-  }
-}
-
-function togglePause() {
-  state.paused = !state.paused;
-  if (state.paused) {
-    dialog('Пауза', 'Дождь не прекращается.\nДаже когда ты перестаёшь двигаться.');
-  } else {
-    closeDialog();
-  }
-}
-
-function say(text, duration = 3000) {
-  ui.subtitle.textContent = text;
-  ui.subtitle.style.opacity = '1';
-  clearTimeout(ui.subtitle._timer);
-  ui.subtitle._timer = setTimeout(() => { ui.subtitle.style.opacity = '0'; }, duration);
-}
-
-function updateInventory() {
-  ui.inventory.innerHTML = `КЛЮЧ: ${state.hasKey ? 'ЕСТЬ' : 'НЕТ'}<br>ФОНАРЬ: ${state.lightOn ? 'ВКЛ.' : 'ВЫКЛ.'}`;
-}
-
-function setObjective(text) {
-  state.objective = text;
-  ui.objective.textContent = text;
-}
-
-function findNearestInteractable() {
-  const pos = camera.position;
-  let best = null;
-  let bestDist = interactDistance;
-  for (const obj of interactables) {
-    if (obj.done) continue;
-    if (obj.type === 'bedphoto' && !state.enteredRoom) continue;
-    const d = pos.distanceTo(obj.position);
-    if (d < bestDist) {
-      bestDist = d;
-      best = obj;
-    }
-  }
-  return best;
-}
-
-function interact() {
-  if (!state.started || state.paused) return;
-  const obj = currentInteractable || findNearestInteractable();
-  if (!obj) {
-    say('Здесь нечего трогать.', 1400);
-    return;
-  }
-  switch (obj.type) {
-    case 'key':
-      state.hasKey = true;
-      obj.done = true;
-      if (keyMesh) keyMesh.visible = false;
-      updateInventory();
-      setObjective('Найдите номер 09 в коридоре.');
-      say('На бирке выбито: 09. На обратной стороне царапина: «НЕ ОТКРЫВАЙ».', 4200);
-      playTone(180, 0.35, 0.07);
-      break;
-    case 'note':
-      obj.done = true;
-      state.noteRead = true;
-      dialog('Записка', 'Если ты читаешь это, администратор опять исчез.\n\nНе отвечай на телефон после третьего звонка.\nНе смотри в зеркало после полуночи.\nЕсли увидишь себя в конце коридора — не приближайся.\n\n«Он уже знает, что ты приехал».');
-      break;
-    case 'phone':
-      if (!state.phoneDone) {
-        state.phoneDone = true;
-        dialog('Телефон', 'Телефон звонит, хотя провод обрезан.\n\nСначала — только дыхание.\n\nЗатем собственный голос шепчет:\n«Не входи в номер. Я всё ещё там».');
-        setTimeout(() => say('Из трубки раздаётся твой собственный смех.', 2800), 900);
-        playTone(520, 0.2, 0.05);
-      } else {
-        say('Три коротких удара. Потом тишина.', 2500);
-      }
-      break;
-    case 'door':
-      if (!state.hasKey) {
-        say('Замок не поддаётся. Нужен ключ от номера 09.', 2600);
-        playTone(90, 0.4, 0.05);
-        break;
-      }
-      if (!state.doorOpen) {
-        state.doorOpen = true;
-        obj.done = true;
-        if (door09) {
-          door09.rotation.y = -Math.PI * 0.7;
-          door09.position.x -= 0.35;
-          door09.position.z -= 0.15;
-        }
-        roomGroup.visible = true;
-        setObjective('Войдите в номер 09 и осмотрите комнату.');
-        say('Дверь открывается беззвучно. Внутри пахнет мокрой землёй.', 3800);
-        playTone(75, 0.9, 0.09);
-      } else {
-        say('Дверь уже открыта.', 1600);
-      }
-      break;
-    case 'bedphoto':
-      obj.done = true;
-      dialog('Чужое лицо', 'На фотографии ты стоишь в этом же номере.\n\nСнимок сделан изнутри шкафа.\n\nТы не помнишь, чтобы кто-то фотографировал тебя.\n\nЗа твоей спиной стоит ещё один человек.');
-      setTimeout(() => {
-        if (state.stage < 10) {
-          state.stage = 10;
-          setTimeout(() => {
-            dialog('Конец эпизода', 'Ты слышишь, как дверь номера медленно закрывается за спиной.\n\nКлюч в руке становится холодным.\n\nВ коридоре гаснет последний свет.\n\nЭпизод 01 завершён.\n\nПродолжение следует...');
-            setObjective('Эпизод завершён.');
-          }, 1200);
-        }
-      }, 800);
-      break;
-  }
-}
-
-function toggleFlashlight() {
-  state.lightOn = !state.lightOn;
-  flashlight.intensity = state.lightOn ? 2.4 : 0;
-  updateInventory();
-  playTone(state.lightOn ? 620 : 180, 0.08, 0.04);
-}
-
-function updatePlayer(delta) {
-  if (!state.started || state.paused) return;
-  const speed = running ? 4.2 : 2.4;
-  playerVelocity.x -= playerVelocity.x * 12.0 * delta;
-  playerVelocity.z -= playerVelocity.z * 12.0 * delta;
-
-  playerDirection.z = Number(moveForward) - Number(moveBackward);
-  playerDirection.x = Number(moveRight) - Number(moveLeft);
-  if (isMobile) {
-    playerDirection.z -= jy;
-    playerDirection.x += jx;
-  }
-  playerDirection.normalize();
-
-  if (moveForward || moveBackward || moveLeft || moveRight || jx !== 0 || jy !== 0) {
-    playerVelocity.z -= playerDirection.z * speed * 18 * delta;
-    playerVelocity.x -= playerDirection.x * speed * 18 * delta;
-  }
-
-  if (controls && controls.isLocked) {
-    controls.moveRight(-playerVelocity.x * delta);
-    controls.moveForward(-playerVelocity.z * delta);
-  } else if (isMobile) {
-    const forward = new THREE.Vector3();
-    camera.getWorldDirection(forward);
-    forward.y = 0;
-    forward.normalize();
-    const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
-    camera.position.addScaledVector(forward, -playerVelocity.z * delta);
-    camera.position.addScaledVector(right, -playerVelocity.x * delta);
-  }
-
-  const p = camera.position;
-  p.y = 1.65;
-
-  if (!state.doorOpen) {
-    p.x = Math.max(-1.55, Math.min(1.55, p.x));
-    p.z = Math.max(-13.8, Math.min(9, p.z));
-  } else {
-    if (p.z < -13.5 && p.x < -1.4) {
-      p.x = Math.max(-5.5, Math.min(-1.9, p.x));
-      p.z = Math.max(-16.7, Math.min(-12.6, p.z));
-    } else {
-      p.x = Math.max(-1.55, Math.min(1.55, p.x));
-      p.z = Math.max(-14.5, Math.min(9, p.z));
-    }
-  }
-
-  if (state.doorOpen && !state.enteredRoom && p.x < -2.0 && p.z < -13.8) {
-    state.enteredRoom = true;
-    setObjective('Осмотрите номер. Найдите то, чего здесь не должно быть.');
-    dialog('Номер 09', 'Комната кажется знакомой.\n\nНа тумбочке лежит фотография.\nНа ней — ты, стоящий в этом же номере.\n\nНо снимок сделан изнутри шкафа.');
-  }
-}
-
-function updateInteractPrompt() {
-  currentInteractable = findNearestInteractable();
-  if (currentInteractable) {
-    ui.prompt.textContent = currentInteractable.label + (isMobile ? '' : ' · E');
-    ui.prompt.style.opacity = '1';
-  } else {
-    ui.prompt.style.opacity = '0';
-  }
-}
-
-function updateRain(delta) {
-  if (!rainParticles) return;
-  const pos = rainParticles.geometry.attributes.position;
-  const vel = rainParticles.geometry.userData.velocities;
-  for (let i = 0; i < pos.count; i++) {
-    pos.array[i * 3 + 1] -= vel[i] * delta;
-    if (pos.array[i * 3 + 1] < 0) {
-      pos.array[i * 3 + 1] = 10 + Math.random() * 4;
-      pos.array[i * 3] = camera.position.x + (Math.random() - 0.5) * 22;
-      pos.array[i * 3 + 2] = camera.position.z + (Math.random() - 0.5) * 22;
-    }
-  }
-  pos.needsUpdate = true;
-}
-
-function updateStory(delta) {
-  if (!state.started || state.paused) return;
-  state.elapsed += delta;
-  if (state.elapsed > 14 && state.stage === 0) {
-    state.stage = 1;
-    say('Свет в конце коридора только что погас.', 3200);
-    playTone(65, 1.1, 0.08);
-  }
-  if (state.elapsed > 28 && state.stage === 1) {
-    state.stage = 2;
-    silhouette.visible = true;
-    say('В конце коридора стоит человек.', 3600);
-    playTone(55, 1.0, 0.09);
-  }
-  if (state.elapsed > 36 && state.stage === 2) {
-    state.stage = 3;
-    silhouette.visible = false;
-    say('Ты моргнул. Коридор пуст.', 2800);
-    playTone(90, 0.5, 0.06);
-  }
-  if (state.elapsed > 50 && state.stage === 3 && !state.phoneDone) {
-    state.stage = 4;
-    say('Телефон на стойке начинает звонить.', 3400);
-    playTone(480, 0.18, 0.05);
-  }
-}
-
-function animate() {
-  requestAnimationFrame(animate);
-  const delta = Math.min(clock.getDelta(), 0.05);
-  updatePlayer(delta);
-  updateInteractPrompt();
-  updateRain(delta);
-  updateStory(delta);
-  scene.traverse(obj => {
-    if (obj.isPointLight && obj.userData.flicker) {
-      if (Math.random() > 0.97) {
-        obj.intensity = obj.userData.baseIntensity * (0.4 + Math.random() * 0.7);
-      } else {
-        obj.intensity = THREE.MathUtils.lerp(obj.intensity, obj.userData.baseIntensity, 0.1);
-      }
-    }
-  });
-  renderer.render(scene, camera);
-}
-
-// Landscape-only enforcement
-function checkOrientation() {
-  const isPortrait = window.innerHeight > window.innerWidth;
-  const rotateEl = document.getElementById('rotate-msg');
-  const gameEl = document.getElementById('game');
-  if (isPortrait) {
-    if (rotateEl) rotateEl.style.display = 'flex';
-    if (gameEl) gameEl.style.display = 'none';
-    if (typeof state !== 'undefined' && state.started) state.paused = true;
-  } else {
-    if (rotateEl) rotateEl.style.display = 'none';
-    if (gameEl) gameEl.style.display = 'block';
-  }
-}
-window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 120));
-window.addEventListener('resize', checkOrientation);
-checkOrientation();
-
-init();
-</script>
-</body>
-</html>
+  floor.position.set(0, 0.
