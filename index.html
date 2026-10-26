@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#080707">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>NIGHTSHADE: MOTEL 09</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -50,6 +51,7 @@ h1 span{display:block;color:#a72b3b}
 #dtext{font:16px/1.8 Georgia,serif;color:#c9bdb2;white-space:pre-line}
 #next{width:100%;margin-top:26px}
 #pause{display:none;position:absolute;z-index:7;right:15px;top:max(15px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:10px 14px;font-size:16px;color:#ccc;border-radius:4px;pointer-events:auto}
+#fs-btn{position:absolute;z-index:7;right:70px;top:max(15px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:10px 14px;font-size:16px;color:#ccc;border-radius:4px;pointer-events:auto;display:none}
 #flash{position:absolute;inset:0;pointer-events:none;background:#9000;z-index:4;opacity:0;transition:opacity .15s}
 #err{display:none;position:absolute;z-index:20;bottom:10px;left:10px;right:10px;background:#300d12;border:1px solid #a72b3b;padding:14px;font-size:12px;overflow-wrap:anywhere;border-radius:4px}
 #loading{position:absolute;inset:0;z-index:30;background:#050505;display:flex;align-items:center;justify-content:center}
@@ -127,6 +129,7 @@ h1 span{display:block;color:#a72b3b}
     <button class="act" id="run"><span>»</span><small>БЕГ</small></button>
   </div>
   <button id="pause">Ⅱ</button>
+  <button id="fs-btn" title="Полный экран">⛶</button>
   <div id="dialog">
     <div class="card">
       <div class="label">NIGHTSHADE · АРХИВ</div>
@@ -156,7 +159,8 @@ const ui = {
   objective: $('objective'), inventory: $('inventory'), prompt: $('prompt'),
   subtitle: $('subtitle'), dialog: $('dialog'), dtitle: $('dtitle'), dtext: $('dtext'),
   next: $('next'), pause: $('pause'), flash: $('flash'), err: $('err'),
-  loading: $('loading'), loadProgress: $('load-progress'), loadText: $('load-text')
+  loading: $('loading'), loadProgress: $('load-progress'), loadText: $('load-text'),
+  fsBtn: $('fs-btn')
 };
 
 const state = {
@@ -576,10 +580,16 @@ function onKeyDown(e) {
     case 'KeyE': interact(); break;
     case 'KeyF': toggleFlashlight(); break;
     case 'Escape':
-      if (state.started) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      } else if (state.started) {
         if (ui.dialog.style.display === 'flex') closeDialog();
         else togglePause();
       }
+      break;
+    case 'KeyF11':
+      e.preventDefault();
+      toggleFullscreen();
       break;
   }
 }
@@ -721,6 +731,40 @@ function setupUI() {
     if (ui.dialog.style.display === 'flex') closeDialog();
     else togglePause();
   });
+  ui.fsBtn.addEventListener('click', toggleFullscreen);
+
+  document.addEventListener('fullscreenchange', () => {
+    ui.fsBtn.textContent = document.fullscreenElement ? '⛶' : '⛶';
+  });
+}
+
+function requestFullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) {
+    el.requestFullscreen().catch(() => {});
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
+
+function exitFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+}
+
+function toggleFullscreen() {
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    exitFullscreen();
+  } else {
+    requestFullscreen();
+  }
 }
 
 function startGame() {
@@ -731,8 +775,13 @@ function startGame() {
   ui.hud.style.display = 'block';
   ui.controls.style.display = isMobile ? 'block' : 'none';
   ui.pause.style.display = 'block';
+  ui.fsBtn.style.display = 'block';
   startAudio();
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+  // Сразу пытаемся уйти в полный экран
+  requestFullscreen();
+
   dialog(
     'Прибытие',
     'Дождь не прекращается уже несколько часов.\n\nНавигатор привёл тебя к мотелю, которого нет на карте.\n\nНа стойке регистрации горит лампа. За ней никого нет.\n\nВ книге постояльцев последняя запись сделана твоим почерком.\n\nДата — завтрашняя.'
@@ -750,6 +799,12 @@ function dialog(title, body) {
 function closeDialog() {
   ui.dialog.style.display = 'none';
   state.paused = false;
+  // На десктопе после закрытия диалога сразу предлагаем захватить мышь
+  if (!isMobile && controls && !controls.isLocked) {
+    setTimeout(() => {
+      try { controls.lock(); } catch(e) {}
+    }, 100);
+  }
 }
 
 function togglePause() {
