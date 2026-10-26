@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<!-- Жесткая блокировка масштабирования для мобилок -->
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#080707">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -9,10 +10,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>NIGHTSHADE: MOTEL 09</title>
 <style>
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050505;color:#e9dfd5;font-family:Arial,sans-serif;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent; user-select: none;}
+  /* Блокируем любые жесты масштабирования */
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050505;color:#e9dfd5;font-family:Arial,sans-serif; touch-action: none; -webkit-text-size-adjust: 100%;}
   
-  /* Виньетка для атмосферы */
   #vignette { position: fixed; inset: 0; z-index: 4; pointer-events: none; 
               background: radial-gradient(ellipse at center, transparent 40%, #000a 100%); }
 
@@ -62,10 +63,41 @@
   #dtext{font:16px/1.8 Georgia,serif;color:#c9bdb2;white-space:pre-line}
   #next{width:100%;margin-top:26px}
 
+  /* Стильная кнопка Пропустить */
+  #skip-btn {
+    display: none;
+    position: absolute;
+    z-index: 25;
+    right: 4%;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 15px 25px;
+    background: #000a;
+    border: 1px solid #a72b3b;
+    color: #e9dfd5;
+    font-size: 12px;
+    letter-spacing: .2em;
+    border-radius: 8px;
+    pointer-events: auto;
+    box-shadow: 0 0 20px rgba(167, 43, 59, 0.4);
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+  }
+  #skip-btn:active {
+    background: #a72b3b;
+    transform: translateY(-50%) scale(0.95);
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 10px rgba(167, 43, 59, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(167, 43, 59, 0.8); }
+    100% { box-shadow: 0 0 10px rgba(167, 43, 59, 0.2); }
+  }
+
   #pause{display:none;position:absolute;z-index:15;right:15px;top:max(15px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:10px 14px;font-size:16px;color:#ccc;border-radius:4px;pointer-events:auto;touch-action:manipulation;}
   #fs-btn{position:absolute;z-index:15;right:70px;top:max(15px,env(safe-area-inset-top));background:#0009;border:1px solid #ffffff44;padding:10px 14px;font-size:16px;color:#ccc;border-radius:4px;pointer-events:auto;display:none;touch-action:manipulation;}
 
-  #err{display:none;position:absolute;z-index:30;bottom:10px;left:10px;right:10px;background:#300d12;border:1px solid #a72b3b;padding:14px;font-size:12px;overflow-wrap:anywhere;border-radius:4px}
+  #err{display:none;position:absolute;z-index:30;top:10px;left:10px;right:10px;background:#300d12;border:1px solid #a72b3b;padding:14px;font-size:12px;overflow-wrap:anywhere;border-radius:4px}
+  
   #loading{position:absolute;inset:0;z-index:50;background:#050505;display:flex;align-items:center;justify-content:center}
   .load-inner{text-align:center;width:min(320px,80%)}
   .load-title{font-size:28px;font-weight:900;letter-spacing:.2em;margin-bottom:30px;color:#a72b3b}
@@ -73,21 +105,12 @@
   #load-progress{height:100%;width:0%;background:linear-gradient(90deg,#a72b3b,#ce3b4e);transition:width .3s}
   #load-text{font-size:11px;letter-spacing:.15em;color:#807872}
 
-  /* ЭКРАН ПОВОРОТА (ТОЛЬКО ГОРИЗОНТАЛЬНЫЙ РЕЖИМ) */
+  /* ЭКРАН ПОВОРОТА */
   #rotate-msg{display:none;position:fixed;inset:0;z-index:9999;background:#050505;color:#e9dfd5;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Georgia,serif;}
   #rotate-msg .icon{font-size:64px;margin-bottom:24px;animation:spin 2.5s ease-in-out infinite}
   #rotate-msg h2{font-size:22px;margin:0 0 12px;letter-spacing:.1em}
   #rotate-msg p{font-size:14px;color:#bca9a0;line-height:1.6;max-width:280px}
   @keyframes spin{0%,100%{transform:rotate(0deg)}40%{transform:rotate(90deg)}60%{transform:rotate(90deg)}}
-  
-  @media (orientation: portrait) {
-    #game{display:none!important}
-    #rotate-msg{display:flex!important}
-  }
-  @media (orientation: landscape) {
-    #rotate-msg{display:none!important}
-    #game{display:block}
-  }
 </style>
 <script type="importmap">
 {
@@ -114,14 +137,12 @@
       <h1>NIGHT<span>SHADE</span></h1>
       <div class="tagline">Некоторые двери лучше оставить закрытыми.<br>Некоторые воспоминания — тоже.</div>
       <div class="rule"></div>
-      <!-- Кнопка старта (pointerdown для мобилок) -->
       <button class="primary" id="start">Войти в мотель</button>
       <div class="foot">ИССЛЕДОВАНИЕ · ПАРАНОЙЯ · НЕИЗВЕСТНОСТЬ<br>РЕКОМЕНДУЮТСЯ НАУШНИКИ</div>
     </div>
   </div>
   
   <canvas id="screen"></canvas>
-  
   <div id="vignette"></div>
 
   <div id="hud">
@@ -155,6 +176,9 @@
       <button class="primary" id="next">Продолжить</button>
     </div>
   </div>
+  
+  <!-- Кнопка пропустить -->
+  <button id="skip-btn">ПРОПУСТИТЬ »</button>
 
   <div id="err"></div>
 
@@ -168,6 +192,22 @@
 </div>
 
 <script type="module">
+// Ловим ошибки, чтобы игра не висела на экране загрузки
+window.onerror = function(msg, url, line) {
+  const errDiv = document.getElementById('err');
+  const loadDiv = document.getElementById('loading');
+  if (errDiv) {
+    errDiv.style.display = 'block';
+    errDiv.innerHTML = `<b>Ошибка:</b> ${msg}<br><small>${url}:${line}</small>`;
+  }
+  if (loadDiv) loadDiv.style.display = 'none';
+  return false;
+};
+
+// Блокируем масштабирование жестами (iOS Safari)
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('touchmove', function(e) { if (e.scale !== 1) e.preventDefault(); }, { passive: false });
+
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
@@ -176,7 +216,7 @@ const ui = {
   menu: $('menu'), start: $('start'), hud: $('hud'), controls: $('controls'),
   objective: $('objective'), inventory: $('inventory'), prompt: $('prompt'),
   subtitle: $('subtitle'), dialog: $('dialog'), dtitle: $('dtitle'), dtext: $('dtext'),
-  next: $('next'), pause: $('pause'), err: $('err'),
+  next: $('next'), skip: $('skip-btn'), pause: $('pause'), err: $('err'),
   loading: $('loading'), loadProgress: $('load-progress'), loadText: $('load-text'),
   fsBtn: $('fs-btn')
 };
@@ -208,6 +248,25 @@ let audioCtx = null, masterGain = null;
 let flashlight = null, rainParticles = null, door09 = null, keyMesh = null, silhouette = null, roomGroup = null;
 const mats = {};
 
+// Функция проверки ориентации
+function enforceLandscape() {
+  const isPortrait = window.innerHeight > window.innerWidth;
+  const rotateEl = document.getElementById('rotate-msg');
+  const gameEl = document.getElementById('game');
+  if (isPortrait) {
+    if (rotateEl) rotateEl.style.display = 'flex';
+    if (gameEl) gameEl.style.display = 'none';
+    if (state.started) state.paused = true; // На паузу, если перевернули
+  } else {
+    if (rotateEl) rotateEl.style.display = 'none';
+    if (gameEl) gameEl.style.display = 'block';
+  }
+}
+
+window.addEventListener('resize', () => { enforceLandscape(); onResize(); });
+window.addEventListener('orientationchange', () => setTimeout(enforceLandscape, 150));
+enforceLandscape();
+
 async function init() {
   try {
     setLoad(10, 'Инициализация...');
@@ -227,20 +286,13 @@ async function init() {
     ui.loading.style.display = 'none';
     animate();
   } catch (e) {
-    showError('Критическая ошибка загрузки: ' + e.message);
-    console.error(e);
+    window.onerror(e.message, 'init', 0);
   }
 }
 
 function setLoad(p, text) {
   ui.loadProgress.style.width = p + '%';
   ui.loadText.textContent = text;
-}
-
-function showError(msg) {
-  ui.err.style.display = 'block';
-  ui.err.textContent = msg;
-  console.error(msg);
 }
 
 function setupRenderer() {
@@ -257,7 +309,6 @@ function setupRenderer() {
   renderer.shadowMap.enabled = !isMobile;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setClearColor(0x050709);
-  window.addEventListener('resize', onResize);
 }
 
 function onResize() {
@@ -689,7 +740,6 @@ function setupMobileControls() {
   canvas.addEventListener('pointerup', e => { if (e.pointerId === lookId) lookId = null; });
   canvas.addEventListener('pointercancel', e => { if (e.pointerId === lookId) lookId = null; });
 
-  // pointerdown для кнопок действий
   $('use').addEventListener('pointerdown', e => { e.preventDefault(); interact(); });
   $('torch').addEventListener('pointerdown', e => { e.preventDefault(); toggleFlashlight(); });
   $('run').addEventListener('pointerdown', e => { e.preventDefault(); running = true; });
@@ -754,9 +804,9 @@ function playTone(freq = 150, dur = 0.3, vol = 0.06) {
 }
 
 function setupUI() {
-  // Изменено на pointerdown
   ui.start.addEventListener('pointerdown', startGame);
   ui.next.addEventListener('pointerdown', closeDialog);
+  ui.skip.addEventListener('pointerdown', closeDialog); // Обработчик для кнопки Пропустить
   
   ui.pause.addEventListener('pointerdown', () => {
     if (!state.started) return;
@@ -820,12 +870,14 @@ function dialog(title, body) {
   ui.dtitle.textContent = title;
   ui.dtext.textContent = body;
   ui.dialog.style.display = 'flex';
+  ui.skip.style.display = 'block'; // Показываем кнопку Пропустить
   state.paused = true;
   if (controls && controls.isLocked) controls.unlock();
 }
 
 function closeDialog() {
   ui.dialog.style.display = 'none';
+  ui.skip.style.display = 'none'; // Скрываем кнопку Пропустить
   state.paused = false;
   if (!isMobile && controls && !controls.isLocked) {
     setTimeout(() => {
